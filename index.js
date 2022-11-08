@@ -5,22 +5,10 @@ const http = axios.create({
   },
 })
 
-
-let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8"
-let network = "polygon-mumbai";
-
-// http.get('/wallet/' + address)
-// .then(function (response) {
-//   console.log(response);
-// })
-// .catch(function (error) {
-//   console.log(error);
-// })
-// .then(function () {
-//   // dans tous les cas
-// });  
-
-
+let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
+let scAddress = "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195";
+// let address = "0xa22d224bFCBBB2aD6714C2b5feBbfe638fBC9627"
+let network = "ethereum-goerli";
 
 async function getWalletId() {
   try {
@@ -30,8 +18,6 @@ async function getWalletId() {
     console.error(error);
   }
 }
-getWalletId();
-
 
 async function getWallet() {
   try {
@@ -42,7 +28,6 @@ async function getWallet() {
     console.error(error);
   }
 }
-getWallet();
 
 async function getWalletBalance() {
   try {
@@ -53,16 +38,65 @@ async function getWalletBalance() {
     console.error(error);
   }
 }
-getWalletBalance();
-
 
 async function getWalletNetworkBalance() {
   try {
     const response = await http.get('/wallet/' + address + '/' + network + '/balance');
-    console.log("res getWalletNetworkBalance : ", response.data);
+    console.log("res getWalletNetworkBalance : ", response.data.balance.formatted);
   }
   catch (error) {
     console.error(error);
   }
 }
-getWalletNetworkBalance();
+
+async function gasOnMatic() {
+  try {
+    const response = await http.get('/gas-price/' + network);
+    console.log("res gasOnMatic : ", response.data);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+async function getSC() {
+  try {
+    const response = await http.get('/smart-contract/' + network + '/' + scAddress);
+    console.log("res getSC : ", response.data);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+async function getAllSc() {
+  try {
+    const response = await http.get('/smart-contract/' + network);
+    console.log("res getAllSc : ", response.data);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+async function getScFunction() {
+  try {
+    const response = await http.get('/smart-contract/' + network + '/' + scAddress + '/available-functions');
+    console.log("res getScFunction : ", response.data);
+  }
+  catch (error) {
+    console.error(error);
+  }
+}
+
+
+// getWalletNetworkBalance();
+
+// getWalletBalance();
+// getWallet();
+// getAllSc();
+// getSC();
+getScFunction();
+
+
+// getWalletNetworkBalance();
