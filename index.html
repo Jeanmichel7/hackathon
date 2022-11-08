@@ -19,20 +19,22 @@
 
     <form>
       <label for="wallet">Wallet :</label>
-      <input type="text" id="wallet" name="wallet" required minlength="4" size="100">
+      <input type="text" id="wallet" name="wallet" required minlength="4" size="100"
+      value="0xB8c9627627a6F1F78CD2b9d172A2816529F313B8">
   
       <input class="button-wallet" type="button" value="Get data" onclick="getWalletBalance()">
-    </form>  
-
-
-
+    </form>
   </section>
 
-  <section>
+  <!-- <section>
     <div>
       <p>Address : <span id="display-address" ></span> </p>
     </div>
-  </section>
+  </section> -->
+
+
+
+  <div id="display"></div>
 
 
 </body>

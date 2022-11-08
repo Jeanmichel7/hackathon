@@ -5,7 +5,8 @@ const http = axios.create({
   },
 })
 
-let address = "";
+let data = {};
+// let address = "";
 // let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
 let scAddress = "0xCc7bb2D219A0FC08033E130629C2B854b7bA9195";
 // let address = "0xa22d224bFCBBB2aD6714C2b5feBbfe638fBC9627"
@@ -32,10 +33,28 @@ async function getWallet() {
 
 async function getWalletBalance() {
   try {
-    let thomas = document.getElementById("wallet").value;
-    address = thomas;
+    let address = document.getElementById("wallet").value.toString();
     const response = await http.get('/wallet/' + address + '/balance');
-    console.log("res getWalletBalance : ", response.data.balance.formatted);
+    console.log("res getWalletBalance : ", response.data);
+
+
+    Object.keys(response.data).forEach(key => {
+      console.log(key, response.data[key]);
+
+
+      document.getElementById("display").innerHTML += `
+      <div>
+        <p>Wallet sur : ${response.data[key].network}</p>
+        <p>Balance : ${response.data[key].balance.formatted.toPrecision(3)}</p>
+      </div><br>
+      `;
+    });
+
+
+
+
+
+
   }
   catch (error) {
     console.error(error);
@@ -94,23 +113,8 @@ async function getScFunction() {
 }
 
 
-// document
-//   .getElementById("wallet")
-//   .addEventListener("input", function(e) {
-//     document .getElementById("display-address").innerText = e.target.value;
-//     address = e.target.value;
-// });
-
-
-
-// getWalletNetworkBalance();
-
-// getWalletBalance();
-// getWallet();
-// getAllSc();
-// getSC();
-// getScFunction();
-
-
-// getWalletNetworkBalance();
-
+document
+  .getElementById("wallet")
+  .addEventListener("input", function(e) {
+    document.getElementById("display-address").innerText = e.target.value;
+});
