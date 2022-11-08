@@ -6,11 +6,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 
+  <link rel="stylesheet" href="main.css">
+
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+
+
   <h1>Hackathon project</h1>
-  <h2>My wallet : </h2>
+  <section>
+    <h2>Information Wallet</h2>
+
+    <form>
+      <label for="wallet">Wallet :</label>
+      <input type="text" id="wallet" name="wallet" required minlength="4" size="100">
+  
+      <input class="button-wallet" type="button" value="Get data" onclick="getWalletBalance()">
+    </form>  
+
+
+
+  </section>
+
+  <section>
+    <div>
+      <p>Address : <span id="display-address" ></span> </p>
+    </div>
+  </section>
+
+
 </body>
 <script src="index.js"></script>
 </html>
