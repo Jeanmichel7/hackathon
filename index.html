@@ -18,35 +18,59 @@
 </head>
 
 <body>
-  <main>
-    <h1>Hackathon project</h1>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Hackathon project</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Dropdown
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Action</a></li>
+              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Something else here</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
+
+  <main>
     <section>
-      <h2>Information Wallet</h2>
+      <h1>Displays the data of a Wallet </h1>
       <form>
-        <label for="wallet">Wallet :</label>
-        <input type="text" id="wallet" name="wallet" required minlength="4" size="100"
+        <label for="wallet" class="form-label">Insert your wallet :</label>
+        <input type="text" id="wallet" class="form-control" name="wallet" required minlength="10"
           value="0xB8c9627627a6F1F78CD2b9d172A2816529F313B8">
-        <input class="button-wallet" type="button" value="Get data" onclick="display_all_data()">
+        <button class="btn btn-primary button-wallet" type="button" onclick="display_all_data()">Valider</button>
       </form>
     </section>
 
-    
     <section id="wallet">
       <h2>Wallet</h2>
       <div id="display"></div>
     </section>
-
 
     <section id="smart-contract">
       <h2>Smart Contract</h2>
       <div id="display-smart-contract"></div>
     </section>
 
-
-
   </main>
-
 
 </body>
 <script src="index.js"></script>
