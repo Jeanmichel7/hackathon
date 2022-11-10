@@ -96,8 +96,6 @@ async function getAllSc() {
       `;
       getScFunction(response.data.items[key].network, response.data.items[key].address);
     });
-
-
   }
   catch (error) {
     console.error(error);
@@ -113,7 +111,6 @@ async function getScFunction(network, scAddress) {
     div.appendChild(document.createElement("br"));
 
     Object.keys(response.data).forEach(key => {
-
       let h3 = document.createElement("h3");
       h3.appendChild(document.createTextNode(key));
       div.appendChild(h3);

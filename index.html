@@ -48,15 +48,21 @@
     </div>
   </nav>
 
-
   <main>
     <section>
       <h1>Displays the data of a Wallet </h1>
       <form>
-        <label for="wallet" class="form-label">Insert your wallet :</label>
-        <input type="text" id="wallet" class="form-control" name="wallet" required minlength="10"
-          value="0xB8c9627627a6F1F78CD2b9d172A2816529F313B8">
-        <button class="btn btn-primary button-wallet" type="button" onclick="display_all_data()">Valider</button>
+        <div class="row g-3 align-items-center">
+          <div class="col-auto">
+            <label for="wallet" class="form-label">Insert your wallet :</label>
+          </div>
+          <div class="col-md-6">
+            <input type="text" id="wallet" class="form-control" name="wallet" required minlength="42"
+            placeholder="0xB8c9627627a6F1F78CD2b9d172A2816529F313B8">
+          </div>
+          <div class="col-auto">
+            <button type="button" class="btn btn-primary button-wallet" onclick="display_all_data()">Submit</button>
+          </div>
       </form>
     </section>
 
