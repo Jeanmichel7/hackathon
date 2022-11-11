@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Accueil</title>
+  <title>Deploy or interact with smart contract</title>
 
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="smartContractStyle.css">
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -22,7 +22,7 @@
     <!-- <script src="model/header.html"></script> -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark"> 
       <div class="container-fluid"> 
-        <a class="navbar-brand" href="index.html">Hackathon project</a> 
+        <a class="navbar-brand" href="../../index.html">Hackathon project</a> 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"  
         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"  
         aria-expanded="false" aria-label="Toggle navigation"> 
@@ -31,13 +31,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
             <li class="nav-item"> 
-              <a class="nav-link page-home active" aria-current="page" href="index.html">Home</a> 
+              <a class="nav-link page-home" aria-current="page" href="../../index.html">Home</a> 
             </li> 
             <li class="nav-item"> 
-              <a class="nav-link page-smart-contract" aria-current="page" href="views/smartContractPage/smartcontract.html">Smart Contract</a> 
+              <a class="nav-link page-smart-contract active" href="smartcontract.html">Smart Contract</a> 
             </li> 
             <li class="nav-item"> 
-              <a class="nav-link page-home" aria-current="page" href="views/tokenPage/tokenPage.html">Token</a> 
+              <a class="nav-link page-home" aria-current="page" href="../tokenPage/tokenPage.html">Token</a> 
             </li> 
             <li class="nav-item dropdown"> 
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
@@ -63,26 +63,14 @@
   <main>
 
     <section class="container">
-      <h1>Displays the data of a Wallet </h1>
-      <p>0xB8c9627627a6F1F78CD2b9d172A2816529F313B8</p>
-      <form>
-        <div class="row g-3 align-items-center">
-          <div class="col-md-6">
-            <input type="text" id="wallet" class="form-control" name="wallet" required minlength="42"
-            placeholder="Insert a wallet address">
-          </div>
-          <div class="col-auto">
-            <button id="button-wallet" type="button" class="btn btn-primary button-wallet">Submit</button>
-          </div>
-      </form>
-      <div id="display"></div>
-      <div id="display-smart-contract"></div>
+      <h1>Deploy or interact with smart contract</h1>
+
     </section>
   </main>
 
 
 
 </body>
-<script type="module" src="index.js"></script>
+<script type="module" src="smartContractPage.js"></script>
 
 </html>
