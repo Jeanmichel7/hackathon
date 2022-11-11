@@ -1,8 +1,14 @@
+.header-eth-balance {
+  color: white;
+}
+
 h1 {
+  padding-top: 15px;
   display: flex;
   justify-content: center;
 }
 
+/* CARD */
 .template-list {
   display: flex;  
   justify-content: center;
@@ -13,6 +19,34 @@ h1 {
   margin-top: 20px;
 }
 
-.header-eth-balance {
-  color: white;
+
+/* .template-list__item button {
+  display: flex;
+  justify-content: center;
+} */
+
+.card-title {
+  min-height: 50px;
+  text-align: center;
+}
+
+.card-text {
+  min-height: 180px;
+}
+
+#display-form-create-token {
+  margin-top:30px;
+
+}
+
+.msg-error {
+  text-align: center;
+  color: red;
+  font-size: 1.2rem;;
+}
+
+.msg-success {
+  text-align: center;
+  color: green;
+  font-size: 1.2rem;;
 }

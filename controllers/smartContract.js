@@ -60,17 +60,17 @@ export async function getSC() {
   }
 }
 
-export async function deploySmartContractFromTemplate() {
-  try {
-    const response = await http.post('/smart-contract/from-template', {
-      "params": {
-        "param1": "value1",
-        "param2": "value2"
-      }
-    });
-    console.log("res postSc : ", response.data);
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
+// export async function deploySmartContractFromTemplate() {
+//   try {
+//     const response = await http.post('/smart-contract/from-template', {
+//       "params": {
+//         "param1": "value1",
+//         "param2": "value2"
+//       }
+//     });
+//     console.log("res postSc : ", response.data);
+//   }
+//   catch (error) {
+//     console.error(error);
+//   }
+// }

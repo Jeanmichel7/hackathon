@@ -23,6 +23,10 @@ export async function gasOnMatic() {
     console.error(error);
   }
 }
+export async function gasOnGoerli() {
+  const response = await http.get('/gas-price/ethereum-goerli');
+  return response.data;
+}
 
 export async function getEthBalance(address) {
   let res = await getWalletNetworkBalance(address, "ethereum-goerli");
