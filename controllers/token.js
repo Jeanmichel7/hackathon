@@ -5,27 +5,112 @@ export async function smartContractTemplate () {
   return response.data;
 }
 
-export async function createToken(templateId) {
-  console.log("template id : ", templateId);
+export async function createERC721(formData) {
+  console.log("create erc721");
+  // console.log("template id : ", templateId);
 
+  // console.log(formData);
+  // console.log("params : ", typeof(formData.get("params")));
+  // console.log("type name : ", typeof(formData.get("params")[0]));
+
+  // const params = [];
+  // params.push(formData.get("supply"));
+  // params.push(formData.get("name"));
+  // params.push(formData.get("symbol"));
+  // params.push(formData.get("decimals"));
+  // params.push(formData.get("signerWallet"));
+
+  // formData.append("params", params);
   let body = { 
-    "network": "ethereum-goerli",
-    "signerWallet": "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8",
-    "templateId": templateId,
-    "name": "DemoToken",
-    "description": "Our own crypto token.",
+    "network": formData.network,
+    "signerWallet": formData.signerWallet,
+    "templateId": formData.templateId,
+    "name": formData.name,
+    "description": formData.description,
     "params": [
-      "1000000",
-      "DemoToken",
-      "DEMO",
-      "18",
-      "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8"
+      formData.supply,
+      formData.name,
+      formData.symbol,
+      formData.decimals,
+      formData.signerWallet
     ]
   }
 
   const res = await http.post('/smart-contract/from-template', body)
   .catch(function (error) {
-    console.log("lerreur est la : ", error);
+    // console.log("lerreur est la : ", error);
+    return error;
+  });
+  return res;
+}
+
+export async function createERC1155(formData) {
+  console.log("create erc1155");
+  let body = { 
+    "network": formData.network,
+    "signerWallet": formData.signerWallet,
+    "templateId": formData.templateId,
+    "name": formData.name,
+    "description": formData.description,
+    "params": [
+      formData.supply,
+      formData.name,
+      formData.decimals,
+      formData.signerWallet,
+    ]
+  }
+
+  const res = await http.post('/smart-contract/from-template', body)
+  .catch(function (error) {
+    console.log("error : ", error);
+    return error;
+  });
+  return res;
+}
+
+export async function createERC20(formData) {
+  console.log("create erc20");
+  let body = { 
+    "network": formData.network,
+    "signerWallet": formData.signerWallet,
+    "templateId": formData.templateId,
+    "name": formData.name,
+    "description": formData.description,
+    "params": [
+      formData.supply,
+      formData.name,
+      formData.decimals,
+      formData.signerWallet,
+    ]
+  }
+
+  const res = await http.post('/smart-contract/from-template', body)
+  .catch(function (error) {
+    console.log("error : ", error);
+    return error;
+  });
+  return res;
+}
+
+export async function createERC20M(formData) {
+  console.log("create erc20mintable");
+  let body = { 
+    "network": formData.network,
+    "signerWallet": formData.signerWallet,
+    "templateId": formData.templateId,
+    "name": formData.name,
+    "description": formData.description,
+    "params": [
+      formData.supply,
+      formData.name,
+      formData.decimals,
+      formData.signerWallet,
+    ]
+  }
+
+  const res = await http.post('/smart-contract/from-template', body)
+  .catch(function (error) {
+    console.log("error : ", error);
     return error;
   });
   return res;

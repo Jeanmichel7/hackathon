@@ -7,7 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Accueil</title>
 
-  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="views/indexPage/index.css">
+  <link rel="stylesheet" href="views/communStyle.css">
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -76,13 +77,19 @@
           </div>
       </form>
       <div id="display"></div>
-      <div id="display-smart-contract"></div>
+      <div id="display-smart-contract" class="row card-list"></div>
     </section>
   </main>
 
 
+  <footer class="bg-light text-center text-lg-start">
+    <!-- <script src="model/footer.html"></script> -->
+    <div class="text-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      © 2022 Hackathon project
+    </div>
+  </footer>
 
 </body>
-<script type="module" src="index.js"></script>
+<script type="module" src="views/indexPage/index.js"></script>
 
 </html>
