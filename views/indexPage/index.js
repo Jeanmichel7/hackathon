@@ -55,9 +55,11 @@ async function display_all_data() {
   /* get and display data about smart contract on each network*/
   for (let i = 0; i < data.length; i++) {
     let sc = await getAllSc(data[i].network);
+    sc =sc.data;
+
     for (let j = 0; j < sc.items.length; j++) {
       document.getElementById("display-smart-contract").innerHTML += `
-      <div class="col-md-6">
+      <div class="col-lg-6 col-md-12">
         <div class="card card-list__item">
           <div class="card-body">
             <h5 class="card-title">${sc.items[j].name}</h5>

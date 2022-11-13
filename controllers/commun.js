@@ -26,19 +26,11 @@ export async function smartContractTemplate () {
 }
 
 /* Gas */
-export async function gasOnMatic() {
-  try {
-    const response = await http.get('/gas-price/' + network);
-    console.log("res gasOnMatic : ", response.data);
-  }
-  catch (error) {
-    console.error(error);
-  }
-}
 export async function gasOnGoerli() {
   const response = await http.get('/gas-price/ethereum-goerli');
   return response.data;
 }
+
 
 export async function getEthBalance(address) {
   let res = await getWalletNetworkBalance(address, "ethereum-goerli");

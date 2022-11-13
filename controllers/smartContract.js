@@ -34,7 +34,7 @@ export async function importSmartContract(abi, network, name, address, descripti
   return response;
 }
 
-export async function callSmartContractFunction(network, address, fctName, params) {
+export async function callSmartContractFunction(network, address, fctName, data) {
   const res = await http.post("/smart-contract/" + network + "/" + address + "/call", {
     "functionName": fctName,
     "params": params
