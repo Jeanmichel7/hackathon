@@ -1,5 +1,17 @@
 import {getWalletNetworkBalance} from './wallet.js';
 
+export let networks = [
+  // "ethereum-mainnet",
+  "ethereum-goerli",
+  "ethereum-ropsten",
+  // "binance-mainnet",
+  "binance-testnet",
+  // "avalanche-mainnet",
+  "avalanche-fuji",
+  // "polygon-mainnet",
+  "polygon-mumbai"
+];
+
 export const http = axios.create({
   baseURL: "https://api.starton.io/v2",
   headers: {
@@ -8,9 +20,8 @@ export const http = axios.create({
   },
 })
 
-export async function getAllData(address) {
-
-  const response = await http.get('/wallet/' + address + '/balance');
+export async function smartContractTemplate () {
+  const response = await http.get('/smart-contract-template');
   return response.data;
 }
 

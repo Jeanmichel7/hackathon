@@ -1,10 +1,5 @@
 import {http} from './commun.js';
 
-export async function smartContractTemplate () {
-  const response = await http.get('/smart-contract-template');
-  return response.data;
-}
-
 export async function createERC721(formData) {
   console.log("create erc721");
   // console.log("template id : ", templateId);

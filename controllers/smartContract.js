@@ -3,7 +3,16 @@ import {http} from './commun.js';
 /* Smart Contract */
 export async function getAllSc(network) {
   const response = await http.get('/smart-contract/' + network);
-  return response.data;
+  return response;
+}
+
+export async function getSc(network, scAddress) {
+  const response = await http.get('/smart-contract/' + network + '/' + scAddress)
+  .catch(function (error) {
+    // console.log("lerreur est la : ", error);
+    return error;
+  });
+  return response;
 }
 
 export async function getScFunctions(network, scAddress) {
@@ -11,27 +20,34 @@ export async function getScFunctions(network, scAddress) {
   return response.data;
 }
 
-export async function getSC() {
-  try {
-    const response = await http.get('/smart-contract/' + network + '/' + scAddress);
-    console.log("res getSC : ", response.data);
-  }
-  catch (error) {
-    console.error(error);
-  }
+export async function importSmartContract(abi, network, name, address, description) {
+  const response = await http.post("https://api.starton.io/v2/smart-contract/import-existing", {
+    "abi": abi,
+    "network": network,
+    "name": name,
+    "address": address,
+    "description": description
+  })
+  .catch(function (error) {
+    return error;
+  });
+  return response;
 }
 
-// export async function deploySmartContractFromTemplate() {
-//   try {
-//     const response = await http.post('/smart-contract/from-template', {
-//       "params": {
-//         "param1": "value1",
-//         "param2": "value2"
-//       }
-//     });
-//     console.log("res postSc : ", response.data);
-//   }
-//   catch (error) {
-//     console.error(error);
-//   }
-// }
+export async function callSmartContractFunction(network, address, fctName, params) {
+  const res = await http.post("/smart-contract/" + network + "/" + address + "/call", {
+    "functionName": fctName,
+    "params": params
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function readSmartContractFunction(network, address, fctName, params) {
+  const res = await http.post("/smart-contract/" + network + "/" + address + "/read", {
+    "functionName": fctName,
+    "params": params
+  })
+  .catch(function (error) { return error; });
+  return res;
+}

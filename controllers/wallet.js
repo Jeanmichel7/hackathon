@@ -4,7 +4,6 @@ import {http} from './commun.js';
 export async function getWallet() {
     const response = await http.get('/wallet/');
     return response.data;
-
 }
 
 export async function getWalletId() {

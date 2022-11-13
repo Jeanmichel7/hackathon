@@ -1,5 +1,5 @@
-import {getEthBalance, gasOnGoerli} from '../../controllers/commun.js';
-import {createERC721, createERC1155, createERC20,createERC20M, smartContractTemplate} from '../../controllers/token.js';
+import { getEthBalance, gasOnGoerli, smartContractTemplate } from '../../controllers/commun.js';
+import { createERC721, createERC1155, createERC20, createERC20M } from '../../controllers/token.js';
 
 
 /* ********************************************* */
@@ -16,8 +16,8 @@ async function displayTemplate() {
 
   for (const elem in allTemplate) {
     // console.log("elem : ", elem);
-    document.getElementById("display-all-template").innerHTML += 
-    `
+    document.getElementById("display-all-template").innerHTML +=
+      `
     <div class="col-auto">
       <div class="card template-list__item">
         <div class="card-body">
@@ -34,8 +34,8 @@ async function displayTemplate() {
   return allTemplate;
 }
 
-function displayForm (template) {
-  for(let elem in template) {
+function displayForm(template) {
+  for (let elem in template) {
     let str = "btn-form-create-token" + elem;
     const btnForm = document.getElementById(str);
     btnForm.addEventListener("click", () => {
@@ -48,8 +48,8 @@ function displayForm (template) {
 
 async function displayFormCreateToken(templates, index) {
   console.log("templates : ", templates);
-  document.getElementById("display-form-create-token").innerHTML = 
-  `
+  document.getElementById("display-form-create-token").innerHTML =
+    `
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">Create your ${templates[index].name} token</h5>
@@ -58,21 +58,21 @@ async function displayFormCreateToken(templates, index) {
         <div class="row">
           <div class="col-md-6">
             <label for="token-name">Token name</label>
-            <input type="text" class="form-control" id="token-name" placeholder="Enter token name" value="Token Name">
+            <input type="text" class="form-control" id="token-name" placeholder="Enter token name" placeholder="Token Name">
           </div>
           <div class="col-auto">
             <label for="token-symbol">Token symbol</label>
-            <input type="text" class="form-control" id="token-symbol" placeholder="Enter token symbol" value="TNX">
+            <input type="text" class="form-control" id="token-symbol" placeholder="Enter token symbol" placeholder="TNX">
           </div>
           <div class="col-auto">
             <label for="token-decimals">Token decimals</label>
-            <input type="number" class="form-control" id="token-decimals" placeholder="Enter token decimals" value=18>
+            <input type="number" class="form-control" id="token-decimals" placeholder="Enter token decimals" placeholder=18>
           </div>
         </div>
 
         <div class="row">
           <div class="col-12">
-            <label for="token-description">Token description</label>
+            <label for="token-description">Token description (optionnal)</label>
             <textarea class="form-control" id="token-description" placeholder="Enter token description" rows="3"></textarea>
           </div>
         </div>
@@ -80,7 +80,12 @@ async function displayFormCreateToken(templates, index) {
         <div class="row">
           <div class="col-md-6">
             <label for="token-network">Network</label>
-            <input type="text" class="form-control" id="token-network" value="ethereum-goerli">
+            <select id="token-network" class="form-select" aria-label="Network">
+              <option selected value="ethereum-goerli">ethereum-goerli</option>
+              <option value="binance-testnet">binance-testnet</option>
+              <option value="polygon-mumbai">polygon-mumbai</option>
+              <option value="avalanche-fuji">avalanche-fuji</option>
+            </select>
           </div>
           <div class="col-md-6">
             <label for="token-signer">signerWallet</label>
@@ -106,61 +111,45 @@ async function displayFormCreateToken(templates, index) {
       </form>
     </div>
   </div>
-
-  <!-- Modal -->
-    <div class="modal fade" id="modal-create-token" tabindex="-1" aria-labelledby="modal-create-tokenLabel"
-    aria-hidden="false">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="modal-create-tokenLabel">Confirm</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <p>You are about to create an ERC-20 token</p>
-
-            <div class="row">
-              <div class="col-4">
-                <p>Fee min : <span id="modal-gas-fee-min"></span></p>
-              </div>
-              <div class="col-4">
-                <p>Fee Max : <span id="modal-gas-fee-avg"></span></p>
-              </div>
-              <div class="col-4">
-                <p>Fee Max : <span id="modal-gas-fee-max"></span></p>
-              </div>
-            </div>
-            <p>Are you sure you want to continue?</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" id="valid-create-token" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
-          </div>
-        </div>
-      </div>
-    </div>
   `
-  
+
+
+
+
+  /* get gas to display on modal confirmation */
   let gasFee = await gasOnGoerli();
   console.log("gasFee : ", gasFee);
 
   const modelGasFeeMin = document.getElementById("modal-gas-fee-min");
   modelGasFeeMin.innerHTML = parseFloat(gasFee.low.maxFeePerGas / 1000000000000).toPrecision(3).toString()
-  + gasFee.network.slice(0,3).toUpperCase();
+    + gasFee.network.slice(0, 3).toUpperCase();
 
   const modelGasFeeAvg = document.getElementById("modal-gas-fee-avg");
   modelGasFeeAvg.innerHTML = parseFloat(gasFee.average.maxFeePerGas / 1000000000000).toPrecision(3).toString()
-  + gasFee.network.slice(0,3).toUpperCase();
+    + gasFee.network.slice(0, 3).toUpperCase();
 
   const modelGasFeeMax = document.getElementById("modal-gas-fee-max");
   modelGasFeeMax.innerHTML = parseFloat(gasFee.fast.maxFeePerGas / 1000000000000).toPrecision(3).toString()
-  + gasFee.network.slice(0,3).toUpperCase();;
+    + gasFee.network.slice(0, 3).toUpperCase();;
+
 
 
 
 
   const btnValideCreateToken = document.getElementById("valid-create-token");
   btnValideCreateToken.addEventListener("click", async () => {
+    let formName = document.getElementById("token-name").value.toString();
+    let formNetwork = document.getElementById("token-network").value.toString();
+    let formSignerWallet = document.getElementById("token-signer").value.toString();
+    let formTemplateId = document.getElementById("token-template-id").value.toString();
+    let formDescription = document.getElementById("token-description").value.toString();
+    let formSupply = document.getElementById("token-supply").value.toString();
+    let formSymbol = document.getElementById("token-symbol").value.toString();
+    let formDecimals = document.getElementById("token-decimals").value.toString();
+
+    if (formName === "" || formNetwork === "" || formSignerWallet === "" || formTemplateId === "" || formDescription === "" || formSupply === "" || formSymbol === "" || formDecimals === "") {
+      alert("Please fill all the fields");
+    }
 
     // const formData = new FormData();
     // formData.append("name", document.getElementById("token-name").value);
@@ -173,6 +162,8 @@ async function displayFormCreateToken(templates, index) {
     // formData.append("symbol", document.getElementById("token-symbol").value);
     // formData.append("decimals", document.getElementById("token-decimals").value);
 
+
+
     const formData = {
       name: document.getElementById("token-name").value.toString(),
       network: document.getElementById("token-network").value.toString(),
@@ -184,26 +175,28 @@ async function displayFormCreateToken(templates, index) {
       decimals: document.getElementById("token-decimals").value.toString(),
     }
 
+
+    /* call appropiate template */
     let res;
     if (formData.templateId === "sct_e851adefe4494fc991207b2c37ed8a83")
       res = await createERC721(formData);
     else if (formData.templateId === "sct_d4c1d5f2ed6f44d185bfb60eee2dbcaf")
-        res = await createERC1155(formData);
+      res = await createERC1155(formData);
     else if (formData.templateId === "sct_81d50607677241beac764bfadd31a3a7")
       res = await createERC20(formData);
     else if (formData.templateId === "sct_82bde80651bd40cca12f044cb80821bc")
       res = await createERC20M(formData);
-    else 
+    else
       res = null;
 
-    
+
     console.log("res : ", res);
     if (res == null) {
       document.getElementById("display-form-create-token").innerHTML = "Template non implemented (la flemme de faire les autres et puis c'est quoi cette histoire de child?)";
       return;
     }
 
-    if (res.status === 201) { 
+    if (res.status === 201) {
       document.getElementById("display-form-create-token").innerHTML = `
       <p class="msg-succes">Token Created : 
         <a href="https://goerli.etherscan.io/tx/${res.data.transaction.transactionHash}">
@@ -238,5 +231,5 @@ async function displayFormCreateToken(templates, index) {
 
 
 getEthBalance(localStorage.getItem('ethBalance'));
-let template      = await displayTemplate();
+let template = await displayTemplate();
 displayForm(template);

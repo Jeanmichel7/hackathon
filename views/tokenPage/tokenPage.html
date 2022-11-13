@@ -22,7 +22,7 @@
 <body>
   <header>
     <!-- <script src="model/header.html"></script> -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="../../index.html">Hackathon project</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -70,6 +70,39 @@
       <div id="display-form-create-token"></div>
       <div id="display-modal-create-token"></div>
     </section>
+
+    <!-- Modale -->
+    <div class="modal fade" id="modal-create-token" tabindex="-1" aria-labelledby="modal-create-tokenLabel"
+    aria-hidden="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="modal-create-tokenLabel">Confirm</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>You are about to create an ERC-20 token</p>
+            <p class="msg-error">(I only implement gas for eth 'cause I'm lazy)</p>
+            <div class="row">
+              <div class="col-4">
+                <p>Fee min : <span id="modal-gas-fee-min"></span></p>
+              </div>
+              <div class="col-4">
+                <p>Fee Max : <span id="modal-gas-fee-avg"></span></p>
+              </div>
+              <div class="col-4">
+                <p>Fee Max : <span id="modal-gas-fee-max"></span></p>
+              </div>
+            </div>
+            <p>Are you sure you want to continue?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" id="valid-create-token" class="btn btn-primary" data-bs-dismiss="modal">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="bg-light text-center text-lg-start">
