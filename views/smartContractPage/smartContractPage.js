@@ -24,27 +24,32 @@ function setParamsFct(fct, paramsType) {
   /* fill params */
   for (let i = 0; i < paramsType.length; i++) {
     if (paramsType[i] === "bytes32") {
-      let str = document.getElementById(`fct${paramsType[i]}`).value.toString();
-      let p = ethers.utils.formatBytes32String(str)
-      params.push(p);
+      let truc = document.getElementById(`fct${paramsType[i]}`).value.toString();
+
+        /* regex check if 0x[a-z]{64} */
+      if (truc === "ADMINROLE")
+        params.push("0x0000000000000000000000000000000000000000000000000000000000000000")
+      else if (truc === "PAUSER_ROLE")
+        params.push("0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a");
+      else
+        params.push(ethers.utils.formatBytes32String(truc));
     }
     else if (paramsType[i] === "uint256") {
-      params.push(parseInt(document.getElementById(`fct${paramsType[i]}`).value));
+      let num = parseInt(document.getElementById(`fct${paramsType[i]}`).value);
+      console.log("type : ", typeof(num), "num : ", num);
+      params.push(num);
     }
-    else if (paramsType[i] === "address") {
+    else if (paramsType[i] === "address")
       params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
-    }
-    else if (paramsType[i] === "bool") {
+    else if (paramsType[i] === "bool")
       params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
-    }
-    else {
+    else
       params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
-    }
   }
   return params;
 }
 
-function displayForm(sc, scAddress, fct, paramsType) {
+function displayForm(sc, scAddress, fct, paramsType, fctType) {
   /* input form params */
   document.getElementById(`display-one-fct${fct}`).innerHTML = `
   <form> `;
@@ -60,30 +65,44 @@ function displayForm(sc, scAddress, fct, paramsType) {
     </div>
   </form> `;
 
-  // document.getElementById(`btn-fct${fct}`).style.display = "none";
-  // document.getElementById(`btn-hide-fct${fct}`).style.display = "block";
+  /* submit form params */
+  document.getElementById(`btn-form-params${fct}`).addEventListener("click", async function(e) {
+    execFunction(sc, scAddress, fct, paramsType, fctType);
+  });
 }
 
-async function readFunction(sc, scAddress, fct, paramsType) {
+async function execFunction(sc, scAddress, fct, paramsType, fctType) {
+
   let display = document.getElementById(`display-one-fct${fct}`);
   let params = setParamsFct(fct, paramsType);
   console.log("params : ", params);
+  console.log("type : ", fctType);
   
-  let resRead = await readSmartContractFunction(sc.network, scAddress, fct, params);
-  if (resRead.status == 201) {
+  let resExec;
+  console.log("function type : ", fctType);
+  if (fctType == "read")
+    resExec = await readSmartContractFunction(sc.network, scAddress, fct, params);
+  else if (fctType == "call") {
+    console.log("test la fonction call");
+    resExec = await callSmartContractFunction(sc.network, scAddress, fct, params);
+  }
+  else //event
+    resExec = await readSmartContractFunction(sc.network, scAddress, fct, params);
+
+
+  if (resExec.status == 201) {
+    console.log("resExec : ", resExec);
     display.innerHTML = `
     <p class="alert alert-success" role="alert">
-      Result : ${JSON.stringify(resRead.data.response)}
+      Result : ${resExec.data.response? JSON.stringify(resExec.data.response) : JSON.stringify(resExec.data.logs)}
     </p> `;
   }
   else {
-    console.log("error: ", resRead);
+    console.log("error: ", resExec);
     display.innerHTML += `
     <p class="alert alert-danger m-2" role="alert">
-      ${resRead.response.data.errorCode} : ${resRead.response.data.message}
+      ${resExec.response.data.errorCode} : ${resExec.response.data.message}
     </p> `;
-    // displayForm(sc, scAddress, fct, paramsType);
-    // readFunction(sc, scAddress, fct, paramsType);
   }
 }
 
@@ -120,17 +139,15 @@ async function getAllFunctions(scAddress, sc) {
 
         /* read function */
         document.getElementById(`btn-fct${fct}`).addEventListener('click', () => {
+          /* hide button */
+          document.getElementById(`btn-fct${fct}`).style.display = "none";
+          document.getElementById(`btn-hide-fct${fct}`).style.display = "block";
+
           let paramsType = fct.split('(')[1].split(')')[0].split(',');
-          if (nbParams(fct) > 0) {
-            displayForm(sc, scAddress, fct, paramsType);
-            document.getElementById(`btn-form-params${fct}`).addEventListener(
-              'click',
-              readFunction(sc, scAddress, fct, paramsType)
-            );
-          }
-          else {
-            readFunction(sc, scAddress, fct, []);
-          }         
+          if (nbParams(fct) > 0)
+            displayForm(sc, scAddress, fct, paramsType, fctType);
+          else
+            execFunction(sc, scAddress, fct, [], fctType);
         });
 
         /* show/haide button */
@@ -139,22 +156,6 @@ async function getAllFunctions(scAddress, sc) {
           document.getElementById(`btn-fct${fct}`).style.display = "block";
           document.getElementById(`btn-hide-fct${fct}`).style.display = "none";
         });
-
-
-
-        /* call function */
-
-
-
-
-
-
-
-
-
-
-
-
       });
     });
 
