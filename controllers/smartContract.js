@@ -34,7 +34,7 @@ export async function importSmartContract(abi, network, name, address, descripti
   return response;
 }
 
-export async function callSmartContractFunction(network, address, fctName, data) {
+export async function callSmartContractFunction(network, address, fctName, params) {
   const res = await http.post("/smart-contract/" + network + "/" + address + "/call", {
     "functionName": fctName,
     "params": params
@@ -48,6 +48,12 @@ export async function readSmartContractFunction(network, address, fctName, param
     "functionName": fctName,
     "params": params
   })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function deleteSmartContract(network, address) {
+  const res = await http.delete("/smart-contract/" + network + "/" + address)
   .catch(function (error) { return error; });
   return res;
 }

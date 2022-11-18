@@ -1,5 +1,5 @@
 import {smartContractTemplate, getEthBalance} from '../../controllers/commun.js';
-import {getSc, getAllSc, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction} from '../../controllers/smartContract.js';
+import {getSc, getAllSc, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from '../../controllers/smartContract.js';
 
 import {networks} from '../../controllers/commun.js';
 
@@ -38,14 +38,29 @@ async function readFunction(sc, scAddress, fct, paramsType) {
 
   document.getElementById(`btn-form-params${fct}`).addEventListener('click', async () => {
     /* fill params */
+
+
+
     for (let i = 0; i < paramsType.length; i++) {
-      params.push(document.getElementById(`fct${paramsType[i]}`).value);
+      let paramInput = document.getElementById(`fct${paramsType}`).value.toString();
+
+      if (paramsType[i] === "bytes32")
+        params.push( ethers.utils.formatBytes32String(paramInput));
+      else if (paramsType[i] === "bytes4")
+        params.push( ethers.utils.formatBytes4String(paramInput));
+      else
+        params.push(document.getElementById(`fct${paramsType[i]}`).value);
     }
+
+
 
     /* post and display */
     let display = document.getElementById(`display-one-fct${fct}`);
     let resRead = await readSmartContractFunction(sc.network, scAddress, fct, params);
+    console.log(resRead);
     if (resRead.status == 201) {
+      console.log("type : ", typeof(resRead.data.response));
+
       display.innerHTML = `
       <p class="alert alert-success" role="alert">
         Result : ${JSON.stringify(resRead.data.response)}
@@ -64,6 +79,49 @@ async function readFunction(sc, scAddress, fct, paramsType) {
   });
 }
 
+async function callFunction(sc, scAddress, fct, paramsType) {
+  let params = [];
+
+  document.getElementById(`btn-form-params${fct}`).addEventListener('click', async () => {
+    /* fill params */
+
+    for (let i = 0; i < paramsType.length; i++) {
+      let paramInput = document.getElementById(`fct${paramsType}`).value.toString();
+
+      if (paramsType[i] === "bytes32")
+        params.push( ethers.utils.formatBytes32String(paramInput));
+      else if (paramsType[i] === "bytes4")
+        params.push( ethers.utils.formatBytes4String(paramInput));
+      else
+        params.push(document.getElementById(`fct${paramsType[i]}`).value);
+    }
+
+    /* post and display */
+    let display = document.getElementById(`display-one-fct${fct}`);
+    let resCall = await callSmartContractFunction(sc.network, scAddress, fct, params);
+    console.log(resCall);
+    if (resCall.status == 201) {
+      console.log("type : ", typeof(resCall.data.response));
+
+      display.innerHTML = `
+      <p class="alert alert-success" role="alert">
+        Result : ${JSON.stringify(resCall.data.response)}
+      </p>
+      `;
+    }
+    else {
+      console.log("error: ", resCall);
+      display.innerHTML += `
+      <p class="alert alert-danger m-2" role="alert">
+        ${resCall.response.data.errorCode} : ${resCall.response.data.message}
+      </p>
+      `;
+      callFunction(sc, scAddress, fct, paramsType);
+    }
+  });
+}
+
+
 async function getAllFunctions(scAddress, sc) {
   const btnScFct = document.getElementById(`btn-sc-fct`);
   btnScFct.addEventListener('click', async () => {
@@ -78,80 +136,135 @@ async function getAllFunctions(scAddress, sc) {
       `;
 
       ret[fctType].forEach(fct => {
-        // console.log("fct : ", fct);
-        document.getElementById("display-sc-fct").innerHTML += `
-        <div class="row">
-          <div class="col-8">
-            <p>${fct}</p>
-          </div>
-          <div class="col-auto">
-            <button type="button" id="btn-read-fct${fct}" class="btn btn-primary btn-read-fct"> Read </button>
-            <button type="button" id="btn-hide-read-fct${fct}" class="btn btn-primary btn-read-fct" style="display:none"> Hide Read </button>
-          </div>
-          <div class="col-auto">
-            <button type="button" id="btn-call-fct${fct}" class="btn btn-primary btn-call-fct"> Call </button>
-            <button type="button" id="btn-hide-call-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Call </button>
-          </div>
-          <div class="col-12">
-            <div id="display-one-fct${fct}" class="row"></div>
-          </div>
-        </div>
-        `;
+
+        if (fctType == "read") {
+          // console.log("fct : ", fct);
+          document.getElementById("display-sc-fct").innerHTML += `
+          <div class="row">
+            <div class="col-8">
+              <p>${fct}</p>
+            </div>
+            <div class="col-auto">
+              <button type="button" id="btn-read-fct${fct}" class="btn btn-primary btn-read-fct"> Read </button>
+              <button type="button" id="btn-hide-read-fct${fct}" class="btn btn-primary btn-read-fct" style="display:none"> Hide Read </button>
+            </div>
+            <div class="col-12">
+              <div id="display-one-fct${fct}" class="row"></div>
+            </div>
+          </div> `;
+        }
+        else if (fctType == "call") {
+              // console.log("fct : ", fct);
+              document.getElementById("display-sc-fct").innerHTML += `
+              <div class="row">
+                <div class="col-8">
+                  <p>${fct}</p>
+                </div>
+                <div class="col-auto">
+                  <button type="button" id="btn-call-fct${fct}" class="btn btn-primary btn-call-fct"> Call </button>
+                  <button type="button" id="btn-hide-call-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Call </button>
+                </div>
+                <div class="col-12">
+                  <div id="display-one-fct${fct}" class="row"></div>
+                </div>
+              </div> `;
+        }
+        else {
+          document.getElementById("display-sc-fct").innerHTML += `
+          <div class="row">
+            <div class="col-8">
+              <p>${fct}</p>
+            </div>
+            <div class="col-auto">
+              <button type="button" id="btn-event-fct${fct}" class="btn btn-primary btn-call-fct"> Event ? </button>
+              <button type="button" id="btn-hide-event-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Event? </button>
+            </div>
+            <div class="col-12">
+              <div id="display-one-fct${fct}" class="row"></div>
+            </div>
+          </div> `;
+        }
       });
+
     });
 
     Object.keys(ret).forEach(fctType => {
       ret[fctType].forEach(fct => {
-
         /* read function */
-        document.getElementById(`btn-read-fct${fct}`).addEventListener('click', async () => {
-          if (nbParams(fct) == 0) {
-            let display = document.getElementById(`display-one-fct${fct}`);
-            let resRead = await readSmartContractFunction(sc.network, scAddress, fct, []);
+        if (fctType == "read") {
+          document.getElementById(`btn-read-fct${fct}`).addEventListener('click', async () => {
+            if (nbParams(fct) == 0) {
+              let display = document.getElementById(`display-one-fct${fct}`);
+              let resRead = await readSmartContractFunction(sc.network, scAddress, fct, []);
 
-            if (resRead.status == 201) {
-              console.log(resRead);
-              display.innerHTML = `
-              <p class="alert alert-success" role="alert">
-                Result : ${resRead.data.response}
-              </p> `;
+              if (resRead.status == 201) {
+                console.log(resRead);
+                display.innerHTML = `
+                <p class="alert alert-success" role="alert">
+                  Result :${resRead.data.response}
+                </p> `;
+              }
+              else {
+                display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
+              }
             }
             else {
-              display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
+              let paramsType = fct.split('(')[1].split(')')[0].split(',');
+              displayForm(fct, paramsType);
+              readFunction(sc, scAddress, fct, paramsType);
             }
-          }
-          else {
-            let paramsType = fct.split('(')[1].split(')')[0].split(',');
-            displayForm(fct, paramsType);
-            readFunction(sc, scAddress, fct, paramsType);
-          }
+            /* hide and remplace button*/
+            document.getElementById(`btn-read-fct${fct}`).style.display = "none";
+            document.getElementById(`btn-hide-read-fct${fct}`).style.display = "block";
+          });
 
-          /* hide and remplace button*/
-          document.getElementById(`btn-read-fct${fct}`).style.display = "none";
-          document.getElementById(`btn-hide-read-fct${fct}`).style.display = "block";
-        });
-
-        document.getElementById(`btn-hide-read-fct${fct}`).addEventListener('click', async () => {
-          document.getElementById(`display-one-fct${fct}`).innerHTML = "";
-          document.getElementById(`btn-read-fct${fct}`).style.display = "block";
-          document.getElementById(`btn-hide-read-fct${fct}`).style.display = "none";
-        });
-
-
-
+          /* hide read function */
+          document.getElementById(`btn-hide-read-fct${fct}`).addEventListener('click', async () => {
+            document.getElementById(`display-one-fct${fct}`).innerHTML = "";
+            document.getElementById(`btn-read-fct${fct}`).style.display = "block";
+            document.getElementById(`btn-hide-read-fct${fct}`).style.display = "none";
+          });
+       }
+      
         /* call function */
+        else if (fctType == "call") {
+          document.getElementById(`btn-call-fct${fct}`).addEventListener('click', async () => {
+            if (nbParams(fct) == 0) {
+              // console.log("fct sans params : ", fct);
+              let display = document.getElementById(`display-one-fct${fct}`);
+              let resRead = await callSmartContractFunction(sc.network, scAddress, fct, []);
+              // console.log("res read : ", resRead);
+              // console.log("test : ", resRead.response.data.status);
 
+              if (resRead.response.data.status == 201) {
+                console.log("res read = 201 ");
+                display.innerHTML = `
+                <p class="alert alert-success" role="alert">
+                  Result :${resRead.data.response}
+                </p> `;
+              }
+              else {
+                console.log("res read != 201 ");
+                display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
+              }
+            }
+            else {
+              let paramsType = fct.split('(')[1].split(')')[0].split(',');
+              displayForm(fct, paramsType);
+              callFunction(sc, scAddress, fct, paramsType);
+            }
+            /* hide and remplace button*/
+            document.getElementById(`btn-call-fct${fct}`).style.display = "none";
+            document.getElementById(`btn-hide-call-fct${fct}`).style.display = "block";
+          });
 
-
-
-
-
-
-
-
-
-
-
+          /* hide call function */
+          document.getElementById(`btn-hide-call-fct${fct}`).addEventListener('click', async () => {
+            document.getElementById(`display-one-fct${fct}`).innerHTML = "";
+            document.getElementById(`btn-call-fct${fct}`).style.display = "block";
+            document.getElementById(`btn-hide-call-fct${fct}`).style.display = "none";
+          });
+        }
       });
     });
 
@@ -271,7 +384,6 @@ async function displayAllScAddress() {
 
     if (sc.status == 200 && sc.data.items.length > 0) {
       sc = sc.data.items;
-      // console.log(sc);
 
       /* check all smart contract per network */
       for (let j = 0; j < sc.length; j++) {
@@ -281,45 +393,49 @@ async function displayAllScAddress() {
             <div class="card-body">
               <h5 class="card-title">${sc[j].name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${sc[j].network}</h6>
-              <a href="#" class="card-link">Edit</a>
-              <a href="#" class="card-link">Delete</a>
+              <a href="#" id="btn-sc-edit-${sc[j].id}" class="card-link">Show</a>
+              <a href="#" id="btn-sc-delete-${sc[j].id}" class="card-link">Delete</a>
+              <div id="display-${sc[j].id}"></div>
             </div>
           </div>
         </div>
         `;
       }
+
+      for (let j = 0; j < sc.length; j++) {
+        /* edit smart contract */
+        let btnEdit = document.getElementById(`btn-sc-edit-${sc[j].id}`);
+        btnEdit.addEventListener("click", () => {
+          console.log(sc[j]);
+          displaySc(sc[j].address);
+        });
+
+        /* delete smart contract */
+        let btnDelete = document.getElementById(`btn-sc-delete-${sc[j].id}`);
+        btnDelete.addEventListener("click", async () => {
+          console.log(sc[j]);
+
+          let res = await deleteSmartContract(sc[j].network, sc[j].address)
+          if (res.status == 200 ) {
+            console.log("ddeleteed");
+            displayAllScAddress();
+          }
+          else {
+            let displayError = document.getElementById(`display-${sc[j].id}`);
+            displayError.innerHTML = `
+            <div class="alert alert-danger m-2" role="alert">
+              ${res.response.data.message}
+            </div>  `;
+            console.error(res);
+            // return;
+          }
+
+
+        });
+      }
     }
   }
 
-  // for(let i = 0; i < networks.length; i++) {
-  //   let res = await getAllSc(address);
-  //   console.log("res : ", res);
-  //   if (res.status == 200) {
-  //     res = res.data;
-  //     let div = document.createElement("div");
-  //     div.setAttribute("class", "col-md-12");
-  //     let card = document.createElement("div");
-  //     card.setAttribute("class", "card card-list__item");
-  //     let cardBody = document.createElement("div");
-  //     cardBody.setAttribute("class", "card-body");
-  //     let h5 = document.createElement("h5");
-  //     h5.setAttribute("class", "card-title");
-  //     h5.appendChild(document.createTextNode("Smart contracts"));
-  //     cardBody.appendChild(h5);
-  //     let ul = document.createElement("ul");
-  //     ul.setAttribute("class", "list-group list-group-flush");
-  //     res.forEach(elem => {
-  //       let li = document.createElement("li");
-  //       li.setAttribute("class", "list-group-item");
-  //       li.appendChild(document.createTextNode(elem.address));
-  //       ul.appendChild(li);
-  //     });
-  //     cardBody.appendChild(ul);
-  //     card.appendChild(cardBody);
-  //     div.appendChild(card);
-  //     document.getElementById("display-smart-contract").appendChild(div);
-  //   }
-  // }
 }
 
 

@@ -1,5 +1,16 @@
 import {getWalletNetworkBalance} from './wallet.js';
 
+// const Web3 = require('web3');
+
+
+// const Web3 = require('web3');
+
+// const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
+
+
+
+
+
 export let networks = [
   // "ethereum-mainnet",
   "ethereum-goerli",
