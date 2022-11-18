@@ -16,52 +16,75 @@ function nbParams(fct) {
   return params.length;
 }
 
-function displayForm(fct, paramsType) {
- /* input form params */
- document.getElementById(`display-one-fct${fct}`).innerHTML = `
- <form id="form-fct${fct}"> `;
- for (let i = 0; i < paramsType.length; i++) {
-   document.getElementById(`display-one-fct${fct}`).innerHTML += `
-     <div class="col-5">
-       <input type="text" class="form-control" id="fct${paramsType[i]}" placeholder="${paramsType[i]}">
-     </div>`;
- }
- document.getElementById(`display-one-fct${fct}`).innerHTML += `
-   <div class="col-2">  
-     <button type="submit" id="btn-form-params${fct}" class="btn btn-primary">Submit</button>
-   </div>
- </form>`;
+function setParamsFct(fct, paramsType) {
+  let params= [];
+  console.log("paramsType", paramsType);
+  console.log("length : ", paramsType.length);
+ 
+  /* fill params */
+  for (let i = 0; i < paramsType.length; i++) {
+    if (paramsType[i] === "bytes32") {
+      let str = document.getElementById(`fct${paramsType[i]}`).value.toString();
+      let p = ethers.utils.formatBytes32String(str)
+      params.push(p);
+    }
+    else if (paramsType[i] === "uint256") {
+      params.push(parseInt(document.getElementById(`fct${paramsType[i]}`).value));
+    }
+    else if (paramsType[i] === "address") {
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+    }
+    else if (paramsType[i] === "bool") {
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+    }
+    else {
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+    }
+  }
+  return params;
+}
+
+function displayForm(sc, scAddress, fct, paramsType) {
+  /* input form params */
+  document.getElementById(`display-one-fct${fct}`).innerHTML = `
+  <form> `;
+  for (let i = 0; i < paramsType.length; i++) {
+    document.getElementById(`display-one-fct${fct}`).innerHTML += `
+    <div class="col-5">
+      <input type="text" class="form-control" id="fct${paramsType[i]}" placeholder="${paramsType[i]}">
+    </div> `;
+  }
+  document.getElementById(`display-one-fct${fct}`).innerHTML += `
+    <div class="col-2">  
+      <button type="submit" id="btn-form-params${fct}" class="btn btn-primary">Submit</button>
+    </div>
+  </form> `;
+
+  // document.getElementById(`btn-fct${fct}`).style.display = "none";
+  // document.getElementById(`btn-hide-fct${fct}`).style.display = "block";
 }
 
 async function readFunction(sc, scAddress, fct, paramsType) {
-  let params = [];
-
-  document.getElementById(`btn-form-params${fct}`).addEventListener('click', async () => {
-    /* fill params */
-    for (let i = 0; i < paramsType.length; i++) {
-      params.push(document.getElementById(`fct${paramsType[i]}`).value);
-    }
-
-    /* post and display */
-    let display = document.getElementById(`display-one-fct${fct}`);
-    let resRead = await readSmartContractFunction(sc.network, scAddress, fct, params);
-    if (resRead.status == 201) {
-      display.innerHTML = `
-      <p class="alert alert-success" role="alert">
-        Result : ${JSON.stringify(resRead.data.response)}
-      </p>
-      `;
-    }
-    else {
-      console.log("error: ", resRead);
-      display.innerHTML += `
-      <p class="alert alert-danger m-2" role="alert">
-        ${resRead.response.data.errorCode} : ${resRead.response.data.message}
-      </p>
-      `;
-      readFunction(sc, scAddress, fct, paramsType);
-    }
-  });
+  let display = document.getElementById(`display-one-fct${fct}`);
+  let params = setParamsFct(fct, paramsType);
+  console.log("params : ", params);
+  
+  let resRead = await readSmartContractFunction(sc.network, scAddress, fct, params);
+  if (resRead.status == 201) {
+    display.innerHTML = `
+    <p class="alert alert-success" role="alert">
+      Result : ${JSON.stringify(resRead.data.response)}
+    </p> `;
+  }
+  else {
+    console.log("error: ", resRead);
+    display.innerHTML += `
+    <p class="alert alert-danger m-2" role="alert">
+      ${resRead.response.data.errorCode} : ${resRead.response.data.message}
+    </p> `;
+    // displayForm(sc, scAddress, fct, paramsType);
+    // readFunction(sc, scAddress, fct, paramsType);
+  }
 }
 
 async function getAllFunctions(scAddress, sc) {
@@ -69,34 +92,26 @@ async function getAllFunctions(scAddress, sc) {
   btnScFct.addEventListener('click', async () => {
     let ret = await getScFunctions(sc.network, scAddress);
 
-    // console.log("ret : ", ret);
     Object.keys(ret).forEach(fctType => {
       document.getElementById("display-sc-fct").innerHTML += `
       <div class="col-md-12">
         <h5 style="text-align:center">${fctType.toUpperCase()}</h5>
-      </div>
-      `;
+      </div> `;
 
       ret[fctType].forEach(fct => {
-        // console.log("fct : ", fct);
         document.getElementById("display-sc-fct").innerHTML += `
         <div class="row">
           <div class="col-8">
             <p>${fct}</p>
           </div>
           <div class="col-auto">
-            <button type="button" id="btn-read-fct${fct}" class="btn btn-primary btn-read-fct"> Read </button>
-            <button type="button" id="btn-hide-read-fct${fct}" class="btn btn-primary btn-read-fct" style="display:none"> Hide Read </button>
-          </div>
-          <div class="col-auto">
-            <button type="button" id="btn-call-fct${fct}" class="btn btn-primary btn-call-fct"> Call </button>
-            <button type="button" id="btn-hide-call-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Call </button>
+            <button type="button" id="btn-fct${fct}" class="btn btn-primary btn-fct"> ${fctType} </button>
+            <button type="button" id="btn-hide-fct${fct}" class="btn btn-primary btn-fct" style="display:none"> Hide ${fctType} </button>
           </div>
           <div class="col-12">
             <div id="display-one-fct${fct}" class="row"></div>
           </div>
-        </div>
-        `;
+        </div> `;
       });
     });
 
@@ -104,37 +119,25 @@ async function getAllFunctions(scAddress, sc) {
       ret[fctType].forEach(fct => {
 
         /* read function */
-        document.getElementById(`btn-read-fct${fct}`).addEventListener('click', async () => {
-          if (nbParams(fct) == 0) {
-            let display = document.getElementById(`display-one-fct${fct}`);
-            let resRead = await readSmartContractFunction(sc.network, scAddress, fct, []);
-
-            if (resRead.status == 201) {
-              console.log(resRead);
-              display.innerHTML = `
-              <p class="alert alert-success" role="alert">
-                Result : ${resRead.data.response}
-              </p> `;
-            }
-            else {
-              display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
-            }
+        document.getElementById(`btn-fct${fct}`).addEventListener('click', () => {
+          let paramsType = fct.split('(')[1].split(')')[0].split(',');
+          if (nbParams(fct) > 0) {
+            displayForm(sc, scAddress, fct, paramsType);
+            document.getElementById(`btn-form-params${fct}`).addEventListener(
+              'click',
+              readFunction(sc, scAddress, fct, paramsType)
+            );
           }
           else {
-            let paramsType = fct.split('(')[1].split(')')[0].split(',');
-            displayForm(fct, paramsType);
-            readFunction(sc, scAddress, fct, paramsType);
-          }
-
-          /* hide and remplace button*/
-          document.getElementById(`btn-read-fct${fct}`).style.display = "none";
-          document.getElementById(`btn-hide-read-fct${fct}`).style.display = "block";
+            readFunction(sc, scAddress, fct, []);
+          }         
         });
 
-        document.getElementById(`btn-hide-read-fct${fct}`).addEventListener('click', async () => {
+        /* show/haide button */
+        document.getElementById(`btn-hide-fct${fct}`).addEventListener('click', async () => {
           document.getElementById(`display-one-fct${fct}`).innerHTML = "";
-          document.getElementById(`btn-read-fct${fct}`).style.display = "block";
-          document.getElementById(`btn-hide-read-fct${fct}`).style.display = "none";
+          document.getElementById(`btn-fct${fct}`).style.display = "block";
+          document.getElementById(`btn-hide-fct${fct}`).style.display = "none";
         });
 
 

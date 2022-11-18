@@ -1,5 +1,11 @@
 import {getWalletNetworkBalance} from './wallet.js';
+// import { ethers } from "ethers";
 
+// export const getWalletBalance = async (req, res) => {
+//     const {address} = req.params;
+//     const balance = await getWalletNetworkBalance(address);
+//     res.status(200).json({balance});
+// }
 export let networks = [
   // "ethereum-mainnet",
   "ethereum-goerli",
