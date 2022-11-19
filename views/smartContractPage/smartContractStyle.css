@@ -9,12 +9,23 @@
     font-weight: bold;
     margin-bottom: 20px;
 }
-.btn-call-fct {
 
+.fct-type {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
 }
 
-.btn-read-fct {
 
+
+.btn-fcts {
+  display: flex;
+  justify-content: right;
+  padding: 5px 05px 0;
+}
+.fct-name {
+  display: flex;
+  align-items:center;
 }
 
 .msg-error {
