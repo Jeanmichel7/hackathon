@@ -138,7 +138,6 @@ checkConnection();
 connectWallet("Wallet Address");
 if (localStorage.getItem('smartContract') == undefined) {
   await importSc();
-  await addProduct();
 }
 console.log("smart contract : ", JSON.parse(localStorage.getItem('smartContract')));
 
