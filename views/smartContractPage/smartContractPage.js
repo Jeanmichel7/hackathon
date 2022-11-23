@@ -1,4 +1,4 @@
-import {smartContractTemplate, getEthBalance} from '../../controllers/commun.js';
+import {smartContractTemplate, checkConnection} from '../../controllers/commun.js';
 import {getSc, getAllSc, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from '../../controllers/smartContract.js';
 
 import {networks} from '../../controllers/commun.js';
@@ -16,255 +16,175 @@ function nbParams(fct) {
   return params.length;
 }
 
-function displayForm(fct, paramsType) {
- /* input form params */
- document.getElementById(`display-one-fct${fct}`).innerHTML = `
- <form id="form-fct${fct}"> `;
- for (let i = 0; i < paramsType.length; i++) {
-   document.getElementById(`display-one-fct${fct}`).innerHTML += `
-     <div class="col-5">
-       <input type="text" class="form-control" id="fct${paramsType[i]}" placeholder="${paramsType[i]}">
-     </div>`;
- }
- document.getElementById(`display-one-fct${fct}`).innerHTML += `
-   <div class="col-2">  
-     <button type="submit" id="btn-form-params${fct}" class="btn btn-primary">Submit</button>
-   </div>
- </form>`;
+function setParamsFct(fct, paramsType) {
+  let params= [];
+  // console.log("paramsType", paramsType);
+  // console.log("length : ", paramsType.length);
+ 
+  // const regex = /0x\w{64}/g;
+
+  /* fill params */
+  for (let i = 0; i < paramsType.length; i++) {
+    if (paramsType[i] === "bytes32") {
+      let inputParams = document.getElementById(`fct${paramsType[i]}`).value.toString();
+
+      // const found = inputParams.match(regex);
+      // console.log("ret found : ", found);
+
+        /* regex check if 0x[a-z]{64} */
+      if (inputParams === "ADMINROLE")
+        params.push("0x0000000000000000000000000000000000000000000000000000000000000000")
+      else if (inputParams === "PAUSER_ROLE")
+        params.push("0x65d7a28e3265b37a6474929f336521b332c1681b933f6cb9f3376673440d862a");
+      else
+        params.push(ethers.utils.formatBytes32String(inputParams));
+    }
+    else if (paramsType[i] === "uint256") {
+      let num = parseInt(document.getElementById(`fct${paramsType[i]}`).value);
+      console.log("type : ", typeof(num), "num : ", num);
+      params.push(num);
+    }
+    else if (paramsType[i] === "address")
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+    else if (paramsType[i] === "bool")
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+    else
+      params.push(document.getElementById(`fct${paramsType[i]}`).value.toString());
+  }
+  return params;
 }
 
-async function readFunction(sc, scAddress, fct, paramsType) {
-  let params = [];
+function displayForm(sc, scAddress, fct, paramsType, fctType) {
+  /* input form params */
 
-  document.getElementById(`btn-form-params${fct}`).addEventListener('click', async () => {
-    /* fill params */
+  let displayForm = document.getElementById(`display-one-fct${fct}`)
+  displayForm.innerHTML = `
+  <form> `;
+  for (let i = 0; i < paramsType.length; i++) {
+    displayForm.innerHTML += `
+      <input type="text" class="form-control" id="fct${paramsType[i]}" placeholder="${paramsType[i]}">`;
+  }
+  displayForm.innerHTML += `
+    <div class="col-6">  
+      <button type="submit" id="btn-form-params${fct}" class="btn btn-primary">Submit</button>
+    </div>
+  </form> `;
 
-
-
-    for (let i = 0; i < paramsType.length; i++) {
-      let paramInput = document.getElementById(`fct${paramsType}`).value.toString();
-
-      if (paramsType[i] === "bytes32")
-        params.push( ethers.utils.formatBytes32String(paramInput));
-      else if (paramsType[i] === "bytes4")
-        params.push( ethers.utils.formatBytes4String(paramInput));
-      else
-        params.push(document.getElementById(`fct${paramsType[i]}`).value);
-    }
-
-
-
-    /* post and display */
-    let display = document.getElementById(`display-one-fct${fct}`);
-    let resRead = await readSmartContractFunction(sc.network, scAddress, fct, params);
-    console.log(resRead);
-    if (resRead.status == 201) {
-      console.log("type : ", typeof(resRead.data.response));
-
-      display.innerHTML = `
-      <p class="alert alert-success" role="alert">
-        Result : ${JSON.stringify(resRead.data.response)}
-      </p>
-      `;
-    }
-    else {
-      console.log("error: ", resRead);
-      display.innerHTML += `
-      <p class="alert alert-danger m-2" role="alert">
-        ${resRead.response.data.errorCode} : ${resRead.response.data.message}
-      </p>
-      `;
-      readFunction(sc, scAddress, fct, paramsType);
-    }
+  /* submit form params */
+  document.getElementById(`btn-form-params${fct}`).addEventListener("click", async function(e) {
+    execFunction(sc, scAddress, fct, paramsType, fctType);
   });
 }
 
-async function callFunction(sc, scAddress, fct, paramsType) {
-  let params = [];
+async function execFunction(sc, scAddress, fct, paramsType, fctType) {
 
-  document.getElementById(`btn-form-params${fct}`).addEventListener('click', async () => {
-    /* fill params */
+  let display = document.getElementById(`display-one-fct${fct}`);
+  let params = setParamsFct(fct, paramsType);
+  let resExec;
 
-    for (let i = 0; i < paramsType.length; i++) {
-      let paramInput = document.getElementById(`fct${paramsType}`).value.toString();
+  if (fctType == "read")
+    resExec = await readSmartContractFunction(sc.network, scAddress, fct, params);
+  else if (fctType == "call")
+    resExec = await callSmartContractFunction(sc.network, scAddress, fct, params);
+  else //event
+    resExec = await readSmartContractFunction(sc.network, scAddress, fct, params);
 
-      if (paramsType[i] === "bytes32")
-        params.push( ethers.utils.formatBytes32String(paramInput));
-      else if (paramsType[i] === "bytes4")
-        params.push( ethers.utils.formatBytes4String(paramInput));
-      else
-        params.push(document.getElementById(`fct${paramsType[i]}`).value);
-    }
-
-    /* post and display */
-    let display = document.getElementById(`display-one-fct${fct}`);
-    let resCall = await callSmartContractFunction(sc.network, scAddress, fct, params);
-    console.log(resCall);
-    if (resCall.status == 201) {
-      console.log("type : ", typeof(resCall.data.response));
-
-      display.innerHTML = `
-      <p class="alert alert-success" role="alert">
-        Result : ${JSON.stringify(resCall.data.response)}
-      </p>
-      `;
-    }
-    else {
-      console.log("error: ", resCall);
-      display.innerHTML += `
-      <p class="alert alert-danger m-2" role="alert">
-        ${resCall.response.data.errorCode} : ${resCall.response.data.message}
-      </p>
-      `;
-      callFunction(sc, scAddress, fct, paramsType);
-    }
-  });
+  if (resExec.status == 201) {
+    console.log("resExec : ", resExec);
+    display.innerHTML = `
+    <p class="alert alert-success" role="alert">
+      Result : ${resExec.data.response? JSON.stringify(resExec.data.response) : JSON.stringify(resExec.data.logs)}
+    </p> `;
+  }
+  else {
+    console.log("error: ", resExec);
+    display.innerHTML += `
+    <p class="alert alert-danger m-2" role="alert">
+      ${resExec.response.data.errorCode} : ${resExec.response.data.message}
+    </p> `;
+  }
 }
-
 
 async function getAllFunctions(scAddress, sc) {
   const btnScFct = document.getElementById(`btn-sc-fct`);
   btnScFct.addEventListener('click', async () => {
     let ret = await getScFunctions(sc.network, scAddress);
+    console.log("ret : ", ret);
+    let content = document.getElementById("display-sc-fct");
 
-    // console.log("ret : ", ret);
     Object.keys(ret).forEach(fctType => {
-      document.getElementById("display-sc-fct").innerHTML += `
-      <div class="col-md-12">
-        <h5 style="text-align:center">${fctType.toUpperCase()}</h5>
-      </div>
-      `;
+      content.innerHTML += `
+      <div id="display${fctType}" class="col-md-6 fct-type"></div>`;
 
+      document.getElementById(`display${fctType}`).innerHTML += `
+      <h3 style="text-align:center">${fctType}</h3>`;
       ret[fctType].forEach(fct => {
-
-        if (fctType == "read") {
-          // console.log("fct : ", fct);
-          document.getElementById("display-sc-fct").innerHTML += `
-          <div class="row">
-            <div class="col-8">
-              <p>${fct}</p>
-            </div>
-            <div class="col-auto">
-              <button type="button" id="btn-read-fct${fct}" class="btn btn-primary btn-read-fct"> Read </button>
-              <button type="button" id="btn-hide-read-fct${fct}" class="btn btn-primary btn-read-fct" style="display:none"> Hide Read </button>
-            </div>
-            <div class="col-12">
-              <div id="display-one-fct${fct}" class="row"></div>
-            </div>
-          </div> `;
-        }
-        else if (fctType == "call") {
-              // console.log("fct : ", fct);
-              document.getElementById("display-sc-fct").innerHTML += `
-              <div class="row">
-                <div class="col-8">
-                  <p>${fct}</p>
-                </div>
-                <div class="col-auto">
-                  <button type="button" id="btn-call-fct${fct}" class="btn btn-primary btn-call-fct"> Call </button>
-                  <button type="button" id="btn-hide-call-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Call </button>
-                </div>
-                <div class="col-12">
-                  <div id="display-one-fct${fct}" class="row"></div>
-                </div>
-              </div> `;
-        }
-        else {
-          document.getElementById("display-sc-fct").innerHTML += `
-          <div class="row">
-            <div class="col-8">
-              <p>${fct}</p>
-            </div>
-            <div class="col-auto">
-              <button type="button" id="btn-event-fct${fct}" class="btn btn-primary btn-call-fct"> Event ? </button>
-              <button type="button" id="btn-hide-event-fct${fct}" class="btn btn-primary btn-call-fct" style="display:none"> Hide Event? </button>
-            </div>
-            <div class="col-12">
-              <div id="display-one-fct${fct}" class="row"></div>
-            </div>
-          </div> `;
-        }
+        document.getElementById(`display${fctType}`).innerHTML += `
+        <div class="row">
+          <div class="col-10 fct-name">
+            <p class="m-0">${fct}</p>
+          </div>
+          <div class="col-2 m-auto btn-fcts">
+            <button type="button" id="btn-fct${fct}" class="btn btn-primary btn-fct"> ${fctType} </button>
+            <button type="button" id="btn-hide-fct${fct}" class="btn btn-primary btn-fct" style="display:none"> hide </button>
+          </div>
+          <div id="display-one-fct${fct}" class="col-12"></div>
+        </div>`
       });
 
     });
 
+
+
+    // <div class="col-12">
+    // <h5 style="text-align:center">${fctType.toUpperCase()}</h5>
+    // <div class="row">`;
+    
+    // ret[fctType].forEach(fct => {
+    //   content.innerHTML += `
+    //   <div class="col-6">
+    //     <p>${fct}</p>
+    //   </div>
+    //   <div class="col-4">
+    //     <button type="button" id="btn-fct${fct}" class="btn btn-primary btn-fct"> ${fctType} </button>
+    //     <button type="button" id="btn-hide-fct${fct}" class="btn btn-primary btn-fct" style="display:none"> Hide ${fctType} </button>
+    //   </div>`
+    // });
+    
+    // content.innerHTML += `
+    //   </div>
+    // </div>
+
+
+
+
+
+
+
+
+
     Object.keys(ret).forEach(fctType => {
       ret[fctType].forEach(fct => {
+
         /* read function */
-        if (fctType == "read") {
-          document.getElementById(`btn-read-fct${fct}`).addEventListener('click', async () => {
-            if (nbParams(fct) == 0) {
-              let display = document.getElementById(`display-one-fct${fct}`);
-              let resRead = await readSmartContractFunction(sc.network, scAddress, fct, []);
+        document.getElementById(`btn-fct${fct}`).addEventListener('click', () => {
+          /* hide button */
+          document.getElementById(`btn-fct${fct}`).style.display = "none";
+          document.getElementById(`btn-hide-fct${fct}`).style.display = "block";
 
-              if (resRead.status == 201) {
-                console.log(resRead);
-                display.innerHTML = `
-                <p class="alert alert-success" role="alert">
-                  Result :${resRead.data.response}
-                </p> `;
-              }
-              else {
-                display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
-              }
-            }
-            else {
-              let paramsType = fct.split('(')[1].split(')')[0].split(',');
-              displayForm(fct, paramsType);
-              readFunction(sc, scAddress, fct, paramsType);
-            }
-            /* hide and remplace button*/
-            document.getElementById(`btn-read-fct${fct}`).style.display = "none";
-            document.getElementById(`btn-hide-read-fct${fct}`).style.display = "block";
-          });
+          let paramsType = fct.split('(')[1].split(')')[0].split(',');
+          if (nbParams(fct) > 0)
+            displayForm(sc, scAddress, fct, paramsType, fctType);
+          else
+            execFunction(sc, scAddress, fct, [], fctType);
+        });
 
-          /* hide read function */
-          document.getElementById(`btn-hide-read-fct${fct}`).addEventListener('click', async () => {
-            document.getElementById(`display-one-fct${fct}`).innerHTML = "";
-            document.getElementById(`btn-read-fct${fct}`).style.display = "block";
-            document.getElementById(`btn-hide-read-fct${fct}`).style.display = "none";
-          });
-       }
-      
-        /* call function */
-        else if (fctType == "call") {
-          document.getElementById(`btn-call-fct${fct}`).addEventListener('click', async () => {
-            if (nbParams(fct) == 0) {
-              // console.log("fct sans params : ", fct);
-              let display = document.getElementById(`display-one-fct${fct}`);
-              let resRead = await callSmartContractFunction(sc.network, scAddress, fct, []);
-              // console.log("res read : ", resRead);
-              // console.log("test : ", resRead.response.data.status);
-
-              if (resRead.response.data.status == 201) {
-                console.log("res read = 201 ");
-                display.innerHTML = `
-                <p class="alert alert-success" role="alert">
-                  Result :${resRead.data.response}
-                </p> `;
-              }
-              else {
-                console.log("res read != 201 ");
-                display.innerHTML = `<p class="alert alert-danger m-2>Error : ${resRead.response.data.message}</p>`;
-              }
-            }
-            else {
-              let paramsType = fct.split('(')[1].split(')')[0].split(',');
-              displayForm(fct, paramsType);
-              callFunction(sc, scAddress, fct, paramsType);
-            }
-            /* hide and remplace button*/
-            document.getElementById(`btn-call-fct${fct}`).style.display = "none";
-            document.getElementById(`btn-hide-call-fct${fct}`).style.display = "block";
-          });
-
-          /* hide call function */
-          document.getElementById(`btn-hide-call-fct${fct}`).addEventListener('click', async () => {
-            document.getElementById(`display-one-fct${fct}`).innerHTML = "";
-            document.getElementById(`btn-call-fct${fct}`).style.display = "block";
-            document.getElementById(`btn-hide-call-fct${fct}`).style.display = "none";
-          });
-        }
+        /* show/haide button */
+        document.getElementById(`btn-hide-fct${fct}`).addEventListener('click', async () => {
+          document.getElementById(`display-one-fct${fct}`).innerHTML = "";
+          document.getElementById(`btn-fct${fct}`).style.display = "block";
+          document.getElementById(`btn-hide-fct${fct}`).style.display = "none";
+        });
       });
     });
 
@@ -285,7 +205,7 @@ async function displaySc(scAddress) {
   /* display smart contract */
   for (let i = 0; i < networks.length; i++) {
     let sc = await getSc(networks[i], scAddress);
-    // console.log("res : ", sc);
+    console.log("res : ", sc);
 
     if (sc.status == 200) {
       sc = sc.data;
@@ -293,7 +213,6 @@ async function displaySc(scAddress) {
       <div class="col-md-12">
         <div class="card card-list__item">
           <div class="card-body">
-            <p class="form-title"> Your last Search</p>
             <h5 class="card-title">${sc.name}</h5>
             <h6 class="card-subtitle mb-2 text-muted">${networks[i]}</h6>
             <p>Address : ${sc.address}</p>
@@ -312,13 +231,11 @@ async function displaySc(scAddress) {
               <li>${sc.params[3] ? sc.params[3] : ""}</li>
             </ul>` 
             : ""}
-            <div id="display-sc-fct"></div>
+            <div id="display-sc-fct" class="row"></div>
             <button type="button" id="btn-sc-fct" class="btn btn-primary card-list__btn-display_fct"> Functions </button>
           </div>
         </div>
-
-      </div>
-      `;
+      </div>`;
       getAllFunctions(scAddress, sc);
       break;
     }
@@ -360,15 +277,13 @@ async function importSc() {
       <div class="alert alert-success" role="alert">
         <p>Smart contract imported</p>
         <p>address: ${res.data.address}</p>
-      </div>
-      `;
+      </div> `;
     }
     else {
       ret.innerHTML = `
       <div class="alert alert-danger m-2" role="alert">
         ${res.response.data.message}
-      </div>
-      `;
+      </div> `;
       console.error(res);
       return;
     }
@@ -380,7 +295,7 @@ async function displayAllScAddress() {
   /* check all networks*/
   for (let i = 0; i < networks.length; i++) {
     let sc = await getAllSc(networks[i]);
-    // console.log("res : ", sc);
+    console.log("res : ", sc);
 
     if (sc.status == 200 && sc.data.items.length > 0) {
       sc = sc.data.items;
@@ -393,50 +308,37 @@ async function displayAllScAddress() {
             <div class="card-body">
               <h5 class="card-title">${sc[j].name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${sc[j].network}</h6>
-              <a href="#" id="btn-sc-edit-${sc[j].id}" class="card-link">Show</a>
-              <a href="#" id="btn-sc-delete-${sc[j].id}" class="card-link">Delete</a>
-              <div id="display-${sc[j].id}"></div>
+              <a href="#" id="edit-${sc[j].name}" class="card-link">Show</a>
+              <a href="#" id="delete-${sc[j].name}" class="card-link">Delete</a>
             </div>
           </div>
         </div>
         `;
       }
 
+      /* show smart contract */
       for (let j = 0; j < sc.length; j++) {
-        /* edit smart contract */
-        let btnEdit = document.getElementById(`btn-sc-edit-${sc[j].id}`);
-        btnEdit.addEventListener("click", () => {
-          console.log(sc[j]);
+        document.getElementById(`edit-${sc[j].name}`).addEventListener("click", () => {
           displaySc(sc[j].address);
         });
+      }
 
-        /* delete smart contract */
-        let btnDelete = document.getElementById(`btn-sc-delete-${sc[j].id}`);
-        btnDelete.addEventListener("click", async () => {
-          console.log(sc[j]);
+      /* delete smart contract */
+      for (let j = 0; j < sc.length; j++) {
+        document.getElementById(`delete-${sc[j].name}`).addEventListener("click", async () => {
+          let res = await deleteSmartContract(networks[i], sc[j].address);
 
-          let res = await deleteSmartContract(sc[j].network, sc[j].address)
-          if (res.status == 200 ) {
-            console.log("ddeleteed");
+          if (res.status == 200) {
+            document.getElementById("display-smart-contract-mini").innerHTML = "";
             displayAllScAddress();
           }
-          else {
-            let displayError = document.getElementById(`display-${sc[j].id}`);
-            displayError.innerHTML = `
-            <div class="alert alert-danger m-2" role="alert">
-              ${res.response.data.message}
-            </div>  `;
-            console.error(res);
-            // return;
-          }
-
-
         });
       }
     }
   }
-
 }
+
+
 
 
 /* ********************************************* */
@@ -445,13 +347,13 @@ async function displayAllScAddress() {
 /*                                               */
 /* ********************************************* */
 
-getEthBalance(localStorage.getItem('ethBalance'));
+checkConnection();
 
 if (localStorage.getItem('scAddress') != null)
   displaySc(localStorage.getItem('scAddress'));
 
 if (localStorage.getItem('walletAddress') != null)
-  displayAllScAddress()
+  displayAllScAddress();
 
-importSc();
 inputSearchSmartContract();
+importSc();

@@ -8,10 +8,7 @@ export async function getAllSc(network) {
 
 export async function getSc(network, scAddress) {
   const response = await http.get('/smart-contract/' + network + '/' + scAddress)
-  .catch(function (error) {
-    // console.log("lerreur est la : ", error);
-    return error;
-  });
+  .catch(function (error) {return error;});
   return response;
 }
 
@@ -37,6 +34,7 @@ export async function importSmartContract(abi, network, name, address, descripti
 export async function callSmartContractFunction(network, address, fctName, params) {
   const res = await http.post("/smart-contract/" + network + "/" + address + "/call", {
     "functionName": fctName,
+    "signerWallet": "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8",
     "params": params
   })
   .catch(function (error) { return error; });
@@ -54,6 +52,30 @@ export async function readSmartContractFunction(network, address, fctName, param
 
 export async function deleteSmartContract(network, address) {
   const res = await http.delete("/smart-contract/" + network + "/" + address)
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function deploySmartContract(abi, params, network, bytescode, name, signerWallet) {
+  const res = await http.post("/smart-contract/from-bytecode", {
+    "abi": abi,
+    "params": params,
+    "network": network,
+    "bytecode": bytescode.toString(),
+    "name": name,
+    "signerWallet": signerWallet
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+
+/* IPFS */
+
+export async function uploadToIpfs(file) {
+  const res = await http.post("/ipfs/upload", {
+    "file": file
+  })
   .catch(function (error) { return error; });
   return res;
 }

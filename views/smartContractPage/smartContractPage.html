@@ -34,29 +34,23 @@
             <li class="nav-item">
               <a class="nav-link page-home" aria-current="page" href="../../index.html">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link page-smart-contract active" href="smartcontract.html">Smart Contract</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link page-home" aria-current="page" href="../tokenPage/tokenPage.html">Token</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Dropdown
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </li>
+            <li class="nav-item dropdown"> 
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
+              aria-expanded="false"> 
+                Just for fun 
+              </a> 
+              <ul class="dropdown-menu"> 
+                <li><a class="dropdown-item" href="../walletPage/walletPage.html">Wallet</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../smartContractPage/smartContractPage.html">Smart Contract</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../tokenPage/tokenPage.html">Token</a></li> 
+              </ul> 
+            </li> 
           </ul>
           <div>
-            <span id="eth-balance" class="header-eth-balance">Eth</span>
+            <button class="btn btn-outline-success" type="button" id="connectButton">Connect</button>
+            <span id="header-bnb-balance" class="header-bnb-balance"></span>
           </div>
         </div>
       </div>
@@ -67,7 +61,7 @@
     <!-- Form search -->
     <section class="container">
       <h1>Deploy or modify Smart Contract</h1>
-      <p>0x0EF4A410C9a81220A1c0166CD6894c7789a62D07</p>
+      <p>0x4Eef217e7911176f3ea1fcFa068B032fF319E474</p>
       <form>
         <div class="row g-3 align-items-center">
           <div class="col-md-6">
@@ -173,8 +167,7 @@
   </footer>
 
 </body>
-<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
-        type="application/javascript"></script>
+<script type="application/javascript" src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" ></script>
 <script type="module" src="smartContractPage.js"></script>
 
 </html>

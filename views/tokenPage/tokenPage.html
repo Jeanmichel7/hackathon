@@ -36,27 +36,23 @@
             <li class="nav-item">
               <a class="nav-link page-home" aria-current="page" href="../../index.html">Home</a> 
             </li>
-            <li class="nav-item">
-              <a class="nav-link page-smart-contract" href="../smartContractPage/smartcontract.html">Smart Contract</a> 
-            </li>
-            <li class="nav-item">
-              <a class="nav-link page-home active" aria-current="page" href="tokenPage.html">Token</a> 
-            </li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown"> 
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
-              aria-expanded="false">
-                Dropdown
-              </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Action</a></li>
-                <li><a class="dropdown-item" href="#">Another action</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </li>
+              aria-expanded="false"> 
+                Just for fun 
+              </a> 
+              <ul class="dropdown-menu"> 
+                <li><a class="dropdown-item" href="../walletPage/walletPage.html">Wallet</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../smartContractPage/smartContractPage.html">Smart Contract</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../tokenPage/tokenPage.html">Token</a></li> 
+              </ul> 
+            </li> 
           </ul>
           <div>
-            <span id="eth-balance" class="header-eth-balance">Eth</span>
+            <button class="btn btn-outline-success" type="button" id="connectButton">Connect</button>
+            <span id="header-bnb-balance" class="header-bnb-balance"></span>
           </div>
         </div>
       </div>
@@ -71,6 +67,8 @@
       <div id="display-form-create-token"></div>
       <div id="display-modal-create-token"></div>
     </section>
+
+
 
     <!-- Modale -->
     <div class="modal fade" id="modal-create-token" tabindex="-1" aria-labelledby="modal-create-tokenLabel"
@@ -116,6 +114,7 @@
 
 
 </body>
+<script type="application/javascript" src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" ></script>
 <script type="module" src="tokenPage.js"></script>
 
 </html>

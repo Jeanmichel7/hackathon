@@ -9,3 +9,33 @@
     font-weight: bold;
     margin-bottom: 20px;
 }
+
+.fct-type {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+
+
+.btn-fcts {
+  display: flex;
+  justify-content: right;
+  padding: 5px 05px 0;
+}
+.fct-name {
+  display: flex;
+  align-items:center;
+}
+
+.msg-error {
+  text-align: center;
+  color: red;
+  font-size: 1.2rem;;
+}
+
+.msg-success {
+  text-align: center;
+  color: green;
+  font-size: 1.2rem;;
+}
