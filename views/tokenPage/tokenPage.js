@@ -1,4 +1,4 @@
-import { getEthBalance, gasOnGoerli, smartContractTemplate } from '../../controllers/commun.js';
+import { checkConnection, gasOnGoerli, smartContractTemplate } from '../../controllers/commun.js';
 import { createERC721, createERC1155, createERC20, createERC20M } from '../../controllers/token.js';
 
 
@@ -16,8 +16,7 @@ async function displayTemplate() {
 
   for (const elem in allTemplate) {
     // console.log("elem : ", elem);
-    document.getElementById("display-all-template").innerHTML +=
-      `
+    document.getElementById("display-all-template").innerHTML += `
     <div class="col-auto">
       <div class="card template-list__item">
         <div class="card-body">
@@ -28,8 +27,7 @@ async function displayTemplate() {
           </a>
           </div>
       </div>
-    </div>
-    `
+    </div> `
   }
   return allTemplate;
 }
@@ -206,18 +204,13 @@ async function displayFormCreateToken(templates, index) {
 
 
 
-
-
-
-
-
 /* ********************************************* */
 /*                                               */
 /*                 Call function                 */
 /*                                               */
 /* ********************************************* */
 
+checkConnection();
 
-getEthBalance(localStorage.getItem('ethBalance'));
 let template = await displayTemplate();
 displayForm(template);

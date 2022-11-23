@@ -10,7 +10,6 @@
   <link rel="stylesheet" href="index.css">
   <link rel="stylesheet" href="views/communStyle.css">
 
-
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
@@ -33,9 +32,18 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link page-home" aria-current="page" href="../../index.html">Home</a> 
+              <a class="nav-link page-home active" aria-current="page" href="../../index.html">Home</a> 
             </li>
-            <li class="nav-item dropdown"> 
+            <li class="nav-item">
+              <a class="nav-link page-home" aria-current="page" href="views/walletPage/walletPage.html">Wallet</a> 
+            </li>
+            <li class="nav-item">
+              <a class="nav-link page-home" aria-current="page" href="views/smartContractPage/smartContractPage.html">Smart Contract</a> 
+            </li>
+            <li class="nav-item">
+              <a class="nav-link page-home" aria-current="page" href="views/tokenPage/tokenPage.html">Token</a> 
+            </li>
+            <!-- <li class="nav-item dropdown"> 
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
               aria-expanded="false"> 
                 Just for fun 
@@ -47,10 +55,11 @@
                 <li><hr class="dropdown-divider"></li> 
                 <li><a class="dropdown-item" href="views/tokenPage/tokenPage.html">Token</a></li> 
               </ul> 
-            </li> 
+            </li>  -->
           </ul>
           <div>
-            <span id="eth-balance" class="header-eth-balance">Eth</span>
+            <button class="btn btn-outline-success" type="button" id="connectButton">Connect</button>
+            <span id="header-bnb-balance" class="header-bnb-balance"></span>
           </div>
         </div>
       </div>
@@ -58,18 +67,13 @@
   </header>
 
   <main>
-    <h1>Welcome</h1>
-    <h2>Review rewarded platform</h2>
-
-
-
-
-
-
-
-
-
-
+    <div class="container">
+      <h1>Welcome</h1>
+      <h2>Review rewarded platform</h2>
+  
+      <section id="all-products" class="row"></section>
+      <section id="all-reviews" class="row"></section>
+    </div>
   </main>
 
   <footer class="bg-light text-center text-lg-start">
@@ -78,7 +82,6 @@
       © 2022 Hackathon project
     </div>
   </footer>
-
 
 
 </body>

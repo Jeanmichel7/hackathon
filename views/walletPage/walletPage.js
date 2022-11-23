@@ -1,4 +1,4 @@
-import { getEthBalance } from '../../controllers/commun.js';
+import { checkConnection, getBnbBalance } from '../../controllers/commun.js';
 import { getAllSc, getScFunctions } from '../../controllers/smartContract.js';
 import { getWalletBalance } from '../../controllers/wallet.js';
 
@@ -25,6 +25,8 @@ async function display_all_data() {
 
   /* get and display wallet balance all network */
   let data = await getWalletBalance(address);
+
+  console.log("wallet : ", data);
   if (data.length != 0) {
     document.getElementById("display").innerHTML = `
     <div>
@@ -130,18 +132,16 @@ async function display_all_data() {
 
 
 
-
-
-
 /* ********************************************* */
 /*                                               */
 /*                 Call function                 */
 /*                                               */
 /* ********************************************* */
+checkConnection();
 
 const btnWallet = document.getElementById("button-wallet");
 btnWallet.addEventListener("click", display_all_data);
 if (localStorage.getItem('ethBalance') != undefined) {
-  getEthBalance(localStorage.getItem('ethBalance'));
+  getBnbBalance(localStorage.getItem('ethBalance'));
   display_all_data();
 }

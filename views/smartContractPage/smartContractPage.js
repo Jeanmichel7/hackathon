@@ -1,4 +1,4 @@
-import {smartContractTemplate, getEthBalance} from '../../controllers/commun.js';
+import {smartContractTemplate, checkConnection} from '../../controllers/commun.js';
 import {getSc, getAllSc, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from '../../controllers/smartContract.js';
 
 import {networks} from '../../controllers/commun.js';
@@ -212,7 +212,6 @@ async function displaySc(scAddress) {
       <div class="col-md-12">
         <div class="card card-list__item">
           <div class="card-body">
-            <p class="form-title"> Your last Search</p>
             <h5 class="card-title">${sc.name}</h5>
             <h6 class="card-subtitle mb-2 text-muted">${networks[i]}</h6>
             <p>Address : ${sc.address}</p>
@@ -340,13 +339,15 @@ async function displayAllScAddress() {
 }
 
 
+
+
 /* ********************************************* */
 /*                                               */
 /*                 Call function                 */
 /*                                               */
 /* ********************************************* */
 
-getEthBalance(localStorage.getItem('ethBalance'));
+checkConnection();
 
 if (localStorage.getItem('scAddress') != null)
   displaySc(localStorage.getItem('scAddress'));

@@ -1,0 +1,17 @@
+h2 {
+  text-align: center;
+  font-size: 1.5rem!important;
+}
+
+.input-wallet-address {
+  min-width: 50vw ;
+}
+
+.card {
+  margin-bottom: 25px;
+}
+
+.card-img {
+  max-width: 250px;
+  height: 100%;
+}

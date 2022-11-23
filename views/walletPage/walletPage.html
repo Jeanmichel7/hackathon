@@ -32,7 +32,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
           <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
             <li class="nav-item"> 
-              <a class="nav-link page-home active" aria-current="page" href="../../index.html">Home</a> 
+              <a class="nav-link page-home" aria-current="page" href="../../index.html">Home</a> 
             </li> 
             <li class="nav-item dropdown"> 
               <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
@@ -40,7 +40,7 @@
                 Just for fun 
               </a> 
               <ul class="dropdown-menu"> 
-                <li><a class="dropdown-item" href="../walletPage/walletPage.html">Wallet</a></li> 
+                <li><a class="dropdown-item active" href="../walletPage/walletPage.html">Wallet</a></li> 
                 <li><hr class="dropdown-divider"></li> 
                 <li><a class="dropdown-item" href="../smartContractPage/smartContractPage.html">Smart Contract</a></li> 
                 <li><hr class="dropdown-divider"></li> 
@@ -49,7 +49,8 @@
             </li> 
           </ul> 
           <div>
-            <span id="eth-balance" class="header-eth-balance">Eth</span>
+            <button class="btn btn-outline-success" type="button" id="connectButton">Connect</button>
+            <span id="header-bnb-balance" class="header-bnb-balance"></span>
           </div>
         </div> 
       </div> 

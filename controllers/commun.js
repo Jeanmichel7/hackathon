@@ -21,8 +21,8 @@ export let networks = [
 export const http = axios.create({
   baseURL: "https://api.starton.io/v2",
   headers: {
-      "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
-      "Content-Type": "application/json"
+    "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
+    "Content-Type": "application/json"
   },
 })
 
@@ -43,4 +43,20 @@ export async function getEthBalance(address) {
   // console.log(res, "type : ", typeof(res));
   const ethBallance = document.getElementById("eth-balance");
   ethBallance.innerHTML = `${parseFloat(res).toPrecision(5)} Eth`;
+}
+
+export async function getBnbBalance(address) {
+  let res = await getWalletNetworkBalance(address, "binance-testnet");
+  if (res != false) {
+    const bnbBallance = document.getElementById("header-bnb-balance");
+    bnbBallance.innerHTML = `${parseFloat(res).toPrecision(5)} BNB`;
+  }
+}
+
+export async function checkConnection() {
+  if (localStorage.getItem('bnbBalance') != null) {
+    let res = await getBnbBalance(localStorage.getItem('bnbBalance'));
+    if (res != false)
+      document.getElementById("connectButton").style.display = "none";
+  }
 }

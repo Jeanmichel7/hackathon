@@ -23,6 +23,10 @@ export async function getWalletBalance(address) {
 export async function getWalletNetworkBalance(address, network) {
   const res = await http.get('/wallet/' + address + '/' + network + '/balance');
   // console.log("res getWalletNetworkBalance : ", response.data.balance.formatted);
-  return res.data.balance.formatted;
+
+  if (res.status == 200)
+    return res.data.balance.formatted;
+  else
+    return false;
 }
 

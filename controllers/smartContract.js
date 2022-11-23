@@ -55,3 +55,27 @@ export async function deleteSmartContract(network, address) {
   .catch(function (error) { return error; });
   return res;
 }
+
+export async function deploySmartContract(abi, params, network, bytescode, name, signerWallet) {
+  const res = await http.post("/smart-contract/from-bytecode", {
+    "abi": abi,
+    "params": params,
+    "network": network,
+    "bytecode": bytescode.toString(),
+    "name": name,
+    "signerWallet": signerWallet
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+
+/* IPFS */
+
+export async function uploadToIpfs(file) {
+  const res = await http.post("/ipfs/upload", {
+    "file": file
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
