@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil</title>
+
+  <link rel="stylesheet" href="../walletPage/walletPage.css">
+  <link rel="stylesheet" href="../communStyle.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <header>
+    <!-- <script src="model/header.html"></script> -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark"> 
+      <div class="container-fluid"> 
+        <a class="navbar-brand" href="../../index.html">Hackathon project</a> 
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"  
+        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"  
+        aria-expanded="false" aria-label="Toggle navigation"> 
+          <span class="navbar-toggler-icon"></span> 
+        </button> 
+        <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
+            <li class="nav-item"> 
+              <a class="nav-link page-home active" aria-current="page" href="../../index.html">Home</a> 
+            </li> 
+            <li class="nav-item dropdown"> 
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"  
+              aria-expanded="false"> 
+                Just for fun 
+              </a> 
+              <ul class="dropdown-menu"> 
+                <li><a class="dropdown-item" href="../walletPage/walletPage.html">Wallet</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../smartContractPage/smartContractPage.html">Smart Contract</a></li> 
+                <li><hr class="dropdown-divider"></li> 
+                <li><a class="dropdown-item" href="../tokenPage/tokenPage.html">Token</a></li> 
+              </ul> 
+            </li> 
+          </ul> 
+          <div>
+            <span id="eth-balance" class="header-eth-balance">Eth</span>
+          </div>
+        </div> 
+      </div> 
+    </nav> 
+  </header>
+
+  <main>
+
+    <section class="container">
+      <h1>Displays the data of a Wallet </h1>
+      <p>0xB8c9627627a6F1F78CD2b9d172A2816529F313B8</p>
+      <form>
+        <div class="row g-3 align-items-center">
+          <div class="col-md-6">
+            <input type="text" id="wallet" class="form-control" name="wallet" required minlength="42"
+            placeholder="Insert a wallet address">
+          </div>
+          <div class="col-auto">
+            <button id="button-wallet" type="button" class="btn btn-primary button-wallet">Submit</button>
+          </div>
+      </form>
+      <div id="display"></div>
+      <div id="display-smart-contract" class="row card-list"></div>
+    </section>
+  </main>
+
+
+  <footer class="bg-light text-center text-lg-start">
+    <!-- <script src="model/footer.html"></script> -->
+    <div class="text-center" style="background-color: rgba(0, 0, 0, 0.2)">
+      © 2022 Hackathon project
+    </div>
+  </footer>
+
+</body>
+<!-- <script type="module" src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js" ></script> -->
+<script type="application/javascript" src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" ></script>
+<script type="module" src="../walletPage/walletPage.js"></script>
+
+</html>
