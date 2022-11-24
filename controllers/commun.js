@@ -13,7 +13,7 @@ export let networks = [
 ];
 
 export const http = axios.create({
-  baseURL: "https://api.starton.io/v3",
+  baseURL: "https://api.starton.io/v2",
   headers: {
     "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
     "Content-Type": "application/json",
