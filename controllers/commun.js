@@ -1,11 +1,5 @@
 import {getWalletNetworkBalance} from './wallet.js';
-// import { ethers } from "ethers";
 
-// export const getWalletBalance = async (req, res) => {
-//     const {address} = req.params;
-//     const balance = await getWalletNetworkBalance(address);
-//     res.status(200).json({balance});
-// }
 export let networks = [
   // "ethereum-mainnet",
   "ethereum-goerli",
@@ -22,9 +16,28 @@ export const http = axios.create({
   baseURL: "https://api.starton.io/v2",
   headers: {
     "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS"
   },
 })
+
+export const httpA = axios.create({
+  baseURL: "https://api.starton.io/v2",
+  headers: {
+    "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
+    "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+  },
+})
+
+export const ipfs = axios.create({
+  baseURL: "https://ipfs.eu.starton.io/ipfs/",
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+  },
+})
+
 
 export async function smartContractTemplate () {
   const response = await http.get('/smart-contract-template');
@@ -60,3 +73,6 @@ export async function checkConnection() {
       document.getElementById("connectButton").style.display = "none";
   }
 }
+
+export let listpwd = [];
+

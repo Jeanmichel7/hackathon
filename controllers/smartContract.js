@@ -1,4 +1,4 @@
-import {http} from './commun.js';
+import {http, httpA, ipfs} from './commun.js';
 
 /* Smart Contract */
 export async function getAllSc(network) {
@@ -72,10 +72,40 @@ export async function deploySmartContract(abi, params, network, bytescode, name,
 
 /* IPFS */
 
-export async function uploadToIpfs(file) {
-  const res = await http.post("/ipfs/upload", {
-    "file": file
+export async function uploadToIpfs(filename, jsonobj) {
+  const res = await httpA.post("/ipfs/json", {
+    "name" : filename,
+    "content" : jsonobj
   })
+  .catch(function (error) { return error; });
+  console.log(res);
+  return res;
+}
+
+export async function pinIpfs(cid) {
+  const res = await http.get("/ipfs/pin", {
+    "cid": cid
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function deletePinIpfs(id)   {
+  const res = await http.delete(`/ipfs/pin/${id}`)
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function getIpfs(cid) {
+  const res = await http.post("/ipfs/pin", {
+    "cid" : cid
+  })
+  .catch(function (error) { return error; });
+  return res;
+}
+
+export async function getIpfsData(cid) {
+  const res = await ipfs.get(cid)
   .catch(function (error) { return error; });
   return res;
 }

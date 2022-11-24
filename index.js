@@ -1,7 +1,8 @@
-import {checkConnection, getBnbBalance} from '../../controllers/commun.js';
-import {getSc, deploySmartContract, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from '../../controllers/smartContract.js';
+import {checkConnection, getBnbBalance, listpwd, ipfs} from './controllers/commun.js';
+import {getSc, deploySmartContract, readSmartContractFunction, callSmartContractFunction, uploadToIpfs, pinIpfs, deletePinIpfs, getIpfs, getIpfsData} from './controllers/smartContract.js';
 import { bytesCode, ABI } from './controllers/importSmartContract.js';
-import {networks} from '../../controllers/commun.js';
+
+
 
 /* ********************************************* */
 /*                                               */
@@ -13,7 +14,17 @@ async function importSc() {
   let params = [];
   let network = "binance-testnet";
   let name = "scname";
-  let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
+  let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8"; // a modifier
+
+
+  let allMySc = await getSc(network, name);
+
+  for(let i = 0; i < allMySc.length; i++) {
+    if(allMySc[i].name == name) {
+      console.log("already deployed");
+      return;
+    }
+  }
 
   let res = await deploySmartContract(ABI, params, network, bytesCode.toString(), name, address);
   if (res.status == 201) {
@@ -59,7 +70,6 @@ function connectWallet(str) {
 }
 
 async function display_all_products() {
-
   let addressOfSmartContract = JSON.parse(localStorage.getItem('smartContract')).smartContract.address;
   let res = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "total_products", []);
   let nbProducts = res.data.response;
@@ -71,7 +81,7 @@ async function display_all_products() {
     document.getElementById("all-products").innerHTML += `
     <div id="item-id-${product[0]}" class="col-auto">
       <div class="card">
-        <img class="card-img-top card-img" src="assets/ordinateur.jpg" alt="Card image cap">
+      <img class="card-img-top card-img" src="assets/img-${i}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">Card title</h5>
           <h6 class="card-subtitle mb-2 text-muted">sub title</h6>
@@ -117,14 +127,104 @@ async function display_all_products() {
         
         console.log("passWord ", pwd);
         console.log("message ", message);
-        // logic de hash password et compare et le reste
 
+        console.log(product);
+
+
+        // logic de hash password et compare et le reste
       });
     });
   }
 }
 
 
+
+// let retourup=await uploadToIpfs('cidnew.json', obj)
+// console.log(retourup)
+function addReview(obj, review)
+{
+  obj[Object.keys(obj).length] = review
+}
+
+
+async function genPassAndHash() {
+  var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  var charLength = chars.length;
+  var passwd = '';
+  for ( var i = 0; i < 24; i++ ) {
+      passwd += chars.charAt(Math.floor(Math.random() * charLength));
+  }
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(passwd));
+  let hash = Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
+  return [passwd, hash];
+}
+
+async function addHash(cid) {
+  let pwd = genPassAndHash();
+  let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
+  listpwd.push(pwd[0])
+  let hashobj
+  if (cid === 0) {
+    hashobj = {}
+  }
+  else {
+    let Data = await getIpfsData(cid)
+    hashobj = Data.data.Object
+  }
+  addReview(hashobj, pwd[1])
+  let upload = await uploadToIpfs('hash.json', hashobj)
+  // callSmartContractFunction('binance-testnet', address, 'setHashCID', upload.data.cid)
+}
+
+function deleteHash(obj)
+{
+  let keys = Object.keys(obj)
+  delete obj[keys[keys.length-1]]
+}
+
+async function removeHash(pwd, cid)
+{
+  let Data = await getIpfsData(cid)
+  let hashobj = Data.data.Object
+  if ( validHash(pwd, hashobj))
+  {
+    let upload = await uploadToIpfs('hash.json', hashobj)
+    return upload.data.cid
+  }
+}
+
+async function uploadReview(newReview, cid)
+{
+  let reviews;
+  //function call to get ProductCID
+  if(cid === 0)
+    reviews = {}
+  else
+  {
+  let Data = await getIpfsData(cid)
+  reviews = Data.data.Object
+  }
+  addReview(reviews, newReview)
+  let upload = await uploadToIpfs('cid.json', reviews)
+  if (upload.data.cid)
+  {
+    let param = [id, hashcid, upload.data.cid]
+    callSmartContractFunction('binance-testnet', address, "setAllCID", param)
+  }
+}
+
+function validHash(hashobject, testhash) {
+  let rvalue = false;
+  Object.keys(hashobject).forEach(key => {
+      console.log("c'est pas lui : ", hashobject[key]);
+      if (testhash == hashobject[key]) {
+          rvalue = true;
+          delete hashobject[key];
+          return ; 
+      }
+  })
+  return (rvalue);
+}
 
 /* ********************************************* */
 /*                                               */
@@ -138,10 +238,13 @@ checkConnection();
 connectWallet("Wallet Address");
 if (localStorage.getItem('smartContract') == undefined) {
   await importSc();
-  await addProduct();
+  // await addProduct();
 }
 console.log("smart contract : ", JSON.parse(localStorage.getItem('smartContract')));
 
 
 display_all_products();
 
+const obj = {0:"Super Produit"};
+addReview(obj, "Super");
+addHash(0);

@@ -31,8 +31,7 @@ async function display_all_data() {
     document.getElementById("display").innerHTML = `
     <div>
       <h2>Wallet<h2>
-    </div>
-    `
+    </div> `
     Object.keys(data).forEach(key => {
       // console.log(key, data[key]);
       if (data[key].balance.raw != "0") {
@@ -41,8 +40,7 @@ async function display_all_data() {
           <p>${data[key].network} : ${parseFloat(data[key].balance.formatted).toPrecision(2)}
           ${data[key].currencySymbol}
           </p>
-        </div>
-        `;
+        </div> `;
       }
     });
   }
@@ -51,8 +49,7 @@ async function display_all_data() {
   document.getElementById("display-smart-contract").innerHTML = `
   <div>
     <h2>Smart Contract<h2>
-  </div>
-  `
+  </div> `
 
   /* get and display data about smart contract on each network*/
   for (let i = 0; i < data.length; i++) {
@@ -85,8 +82,7 @@ async function display_all_data() {
             <button type="button" id="btn-sc-fct${j}" class="btn btn-primary card-list__btn-display_fct"> Functions </button>
           </div>
         </div>
-      </div>
-      `;
+      </div> `;
     }
 
     /* get and display function on smart contract */
@@ -126,7 +122,7 @@ async function display_all_data() {
   }
 
   /* update header balance */
-  getEthBalance(localStorage.getItem('ethBalance'));
+  getBnbBalance(localStorage.getItem('ethBalance'));
 }
 
 

@@ -295,7 +295,7 @@ async function displayAllScAddress() {
   /* check all networks*/
   for (let i = 0; i < networks.length; i++) {
     let sc = await getAllSc(networks[i]);
-    console.log("res : ", sc);
+    // console.log("res : ", sc);
 
     if (sc.status == 200 && sc.data.items.length > 0) {
       sc = sc.data.items;
