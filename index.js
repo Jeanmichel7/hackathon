@@ -145,13 +145,12 @@ async function display_all_products() {
 }
 
 async function displayHash(product) {
-  console.log("ou : ", product[3]);
-  let hash = await addHash(product[0], product[3])
-  console.log("hach : ", hash);
+  console.log("ancien cid : ", product[2]);
+  let hash = await addHash(product[0], product[2])
+  console.log("hash : ", hash);
 
   let spanHash = document.getElementById("hash");
   spanHash.innerHTML = hash ;
-  console.log("ok ?")
 }
 
 // let retourup=await uploadToIpfs('cidnew.json', obj)
@@ -178,7 +177,6 @@ async function genPassAndHash() {
 
 async function addHash(id, cid) {
   let pwd = await genPassAndHash();
-  // console.log("pwd sfsdffsdfsd : ", pwd);
 
   let addressObj = localStorage.getItem('smartContract');
   let address = JSON.parse(addressObj).smartContract.address;
@@ -186,28 +184,25 @@ async function addHash(id, cid) {
   listpwd.push(pwd[0])
   let hashobj
   if (cid == "") {
-    // console.log("on est la : ", cid, "       ", pwd[0]);
+    console.log("wtf");
     hashobj = {}
   }
   else {
-    let Data = await getIpfsData(cid)
-    hashobj = Data.data.Object
+    let Data = await getIpfsData(cid);
+    console.log("res : ", Data);
+    hashobj = Data.data;
   }
+  console.log("hashobj : ", hashobj);
+
+
+
+
+
   addReview(hashobj, pwd[1])
   let upload = await uploadToIpfs('hash.json', hashobj);
-  // console.log("a : ", upload)
-  console.log("new cid : ", upload.data.cid, typeof(upload.data.cid));
-  // console.log("id : ", parseInt(id, 10), typeof(parseInt(id, 10)));
-
-  // console.log("addre js: ", JSON.parse(address)); 
-  console.log("addre : ", address);
-
-
   let data = [];
   data.push(parseInt(id, 10));
   data.push(upload.data.cid);
-
-
   let foulamerde = await callSmartContractFunction('binance-testnet', address, "setHashCID", data);
   console.log("foulamerde : ", foulamerde);
   return pwd[0]

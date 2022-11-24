@@ -17,6 +17,7 @@ export const http = axios.create({
   headers: {
     "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
     "Content-Type": "application/json",
+    "Access-Control-Allow-Origin": "*",
   },
 })
 
@@ -31,10 +32,7 @@ export const httpA = axios.create({
 
 export const ipfs = axios.create({
   baseURL: "https://ipfs.eu.starton.io/ipfs/",
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Content-Type": "application/json",
-  },
+  headers: {},
 })
 
 
