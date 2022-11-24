@@ -1,7 +1,6 @@
-import {checkConnection, getBnbBalance} from '../../controllers/commun.js';
-import {getSc, deploySmartContract, getScFunctions, importSmartContract, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from '../../controllers/smartContract.js';
+import { checkConnection, getBnbBalance } from './controllers/commun';
+import { getSc, deploySmartContract, getScFunctions, readSmartContractFunction, callSmartContractFunction, deleteSmartContract} from './controllers/smartContract.js';
 import { bytesCode, ABI } from './controllers/importSmartContract.js';
-import {networks} from '../../controllers/commun.js';
 
 /* ********************************************* */
 /*                                               */
@@ -15,6 +14,16 @@ async function importSc() {
   let name = "scname";
   let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
 
+  // check already deployed
+  let allMySc = await getSc(network, name);
+
+  for(let i = 0; i < allMySc.length; i++) {
+    if(allMySc[i].name == name) {
+      console.log("already deployed");
+      return;
+    }
+  }
+
   let res = await deploySmartContract(ABI, params, network, bytesCode.toString(), name, address);
   if (res.status == 201) {
     console.log("Smart contract imported : ", res.data);
@@ -22,7 +31,7 @@ async function importSc() {
     return res.data;
   }
   else {
-    alert("Error : ", res.data);
+    alert("Error : Please connect a wallet with BNB token testnet ", res.data);
     console.error(res);
     return null;
   }
@@ -71,7 +80,7 @@ async function display_all_products() {
     document.getElementById("all-products").innerHTML += `
     <div id="item-id-${product[0]}" class="col-auto">
       <div class="card">
-        <img class="card-img-top card-img" src="assets/ordinateur.jpg" alt="Card image cap">
+        <img class="card-img-top card-img" src="assets/img-${i}" alt="Card image cap">
         <div class="card-body">
           <h5 class="card-title">Card title</h5>
           <h6 class="card-subtitle mb-2 text-muted">sub title</h6>
@@ -101,7 +110,7 @@ async function display_all_products() {
         <div class="form-group">
           <label for="password">Password</label>
           <input type="password" class="form-control" id="pwd-review" placeholder="Enter password">
-          <small class="form-text text-muted">it has been sent to you by mail.</small>
+          <small class="form-text text-muted">It has been sent to you by mail.</small>
         </div>
         <div class="form-group">
           <label for="review">Enter your review</label>
@@ -118,7 +127,6 @@ async function display_all_products() {
         console.log("passWord ", pwd);
         console.log("message ", message);
         // logic de hash password et compare et le reste
-
       });
     });
   }
@@ -138,7 +146,6 @@ checkConnection();
 connectWallet("Wallet Address");
 if (localStorage.getItem('smartContract') == undefined) {
   await importSc();
-  await addProduct();
 }
 console.log("smart contract : ", JSON.parse(localStorage.getItem('smartContract')));
 

@@ -1,4 +1,4 @@
-import {http} from './commun.js';
+import {http} from './commun.js.js';
 
 /* Smart Contract */
 export async function getAllSc(network) {
