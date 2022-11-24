@@ -16,3 +16,11 @@ h2 {
   height: 200px;
   object-fit: cover;
 }
+
+.item {
+  margin: 10px;
+  border: solid 1px #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+
+}

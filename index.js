@@ -51,8 +51,7 @@ function connectWallet(str) {
         <input class="form-control mr-sm-2 input-wallet-address" placeholder="${str}" id="wallet-address">
         <button id="btn-submit-wallet" class="btn btn-primary mb-2">Connect</button>
       </div>
-    </form>
-    `;
+    </form> `;
 
     document.getElementById("btn-submit-wallet").addEventListener("click", async function(e) {
       e.preventDefault();
@@ -67,6 +66,29 @@ function connectWallet(str) {
       }
     });
   });
+}
+
+function displayComment(data) {
+  console.log("data", data);
+  if (data != undefined) {
+    let div = document.getElementById("all-com");
+    div.innerHTML = `
+    <h3>Comments</h3>
+      <div>`;
+
+    Object.keys(data).forEach(item => {
+      // console.log(data[item]);
+      div.innerHTML += `
+      <div class="row item">
+        <p>${data[item]}</p>
+        <p> By : ${item}</p>
+      </div> `;
+    });
+
+    div.innerHTML += `
+      </div>
+    `;
+  }
 }
 
 async function display_all_products() {
@@ -95,10 +117,10 @@ async function display_all_products() {
   }
 
   for (let i = 0; i < nbProducts; i++) {
-    console.log("nombre de boucle : ", i);
+    // console.log("nombre de boucle : ", i);
     let res2 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [i]);
     let product = res2.data.response;
-    console.log("product : ", product);
+    // console.log("product : ", product);
 
     document.getElementById(`item-${product[0]}`).addEventListener("click", async function(e) {
       e.preventDefault();
@@ -107,6 +129,17 @@ async function display_all_products() {
           document.getElementById(`item-id-${j}`).style.display = "none";
         }
       }
+
+      //sdispalay com
+      let res4 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [i]);
+      let product4 = res4.data.response;
+
+      if (product4[3] != "") {
+        let Data = await getIpfsData(product4[3]);
+        displayComment(Data.data);
+      }
+      // console.log("kvjzdfgbjdgkxdndsgkjdkgjbdsgbkds", Data.data);
+
 
       document.getElementById("all-reviews").innerHTML = `
       <form>
@@ -119,6 +152,10 @@ async function display_all_products() {
           <label for="review">Enter your review</label>
           <textarea class="form-control" id="review" rows="3"></textarea>
         </div>
+        <div class="form-group">
+          <label for="wallet-id">Wallet</label>
+          <input class="form-control" id="wallet-id" placeholder="Enter Wallet">
+        </div>
         <button id="btn-submit-review" class="btn btn-primary mb-2">Submit</button>
         <button id="btn-get-hash" class="btn btn-primary mb-2">Get hash</button>
         <span id="hash"></span>
@@ -126,43 +163,33 @@ async function display_all_products() {
 
       document.getElementById("btn-get-hash").addEventListener("click", async function (e) {
         e.preventDefault();
-        let hash = await displayHash(product);
-        document.getElementById("all-reviews").innerHTML = `
-        <form>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input class="form-control" id="pwd-review" value=${hash}>
-            <small class="form-text text-muted">it has been sent to you by mail.</small>
-          </div>
-          <div class="form-group">
-            <label for="review">Enter your review</label>
-            <textarea class="form-control" id="review" rows="3"></textarea>
-          </div>
-          <button id="btn-submit-review" class="btn btn-primary mb-2">Submit</button>
-          <button id="btn-get-hash" class="btn btn-primary mb-2">Get hash</button>
-          <span id="hash"></span>
-        </form> `;
+        let hash = await displayHash(i);
+      });
 
-        document.getElementById("btn-submit-review").addEventListener("click", async function(e) {
-          e.preventDefault();
-          let pwd = document.getElementById("pwd-review").value.toString();
-          let message = document.getElementById("review").value.toString();
+      document.getElementById("btn-submit-review").addEventListener("click", async function(e) {
+        e.preventDefault();
+        let pwd = document.getElementById("pwd-review").value.toString();
+        let message = document.getElementById("review").value.toString();
+        let wallet = document.getElementById("wallet-id").value.toString();
 
-          let res3 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [i]);
-          let product2 = res3.data.response;
+        let res3 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [i]);
+        let product2 = res3.data.response;
 
-          await uploadReview(pwd, message, product2[3], parseInt(product2[0], 10), product2[2]);
-        });
+        await uploadReview(pwd, message, product2[3], parseInt(product2[0], 10), product2[2], wallet);
       });
     });
   }
 }
 
-async function displayHash(product) {
-  console.log("ancien cid : ", product[2]);
-  let hash = await addHash(product[0], product[2])
-  console.log("hash : ", hash);
+async function displayHash(index) {
+  
+  let addressOfSmartContract = JSON.parse(localStorage.getItem('smartContract')).smartContract.address;
+  let res3 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [index]);
+  let product2 = res3.data.response;
 
+  let hash = await addHash(product2[0], product2[2])
+  // console.log("hash : ", hash);
+  
   let spanHash = document.getElementById("hash");
   spanHash.innerHTML = hash ;
   return hash;
@@ -209,14 +236,8 @@ async function addHash(id, cid) {
   data.push(parseInt(id, 10));
   data.push(upload.data.cid);
   let foulamerde = await callSmartContractFunction('binance-testnet', address, "setHashCID", data);
-  console.log("foulamerde : ", foulamerde);
+  // console.log("foulamerde : ", foulamerde);
   return pwd[0]
-}
-
-function deleteHash(obj)
-{
-  let keys = Object.keys(obj)
-  delete obj[keys[keys.length-1]]
 }
 
 async function removeHash(pwd, cid)
@@ -224,15 +245,18 @@ async function removeHash(pwd, cid)
   let Data = await getIpfsData(cid)
   let hashobj = Data.data
   console.log("sadfa", hashobj, pwd)
-  if ( validHash(hashobj, pwd) == true)
+  let valid = await validHash(hashobj, pwd)
+  console.log("valid : ", valid)
+  if ( valid == true)
   {
+    console.log("uploaded")
     let upload = await uploadToIpfs('hash.json', hashobj)
     return upload.data.cid
   }
   return 0
 }
 
-async function uploadReview(pwd, newReview, cid, id, oldCid)
+async function uploadReview(pwd, newReview, cid, id, oldCid, wallet)
 {
   let hashcid = await removeHash(pwd, oldCid)
   let addressObj = localStorage.getItem('smartContract');
@@ -253,9 +277,10 @@ async function uploadReview(pwd, newReview, cid, id, oldCid)
   }
   addReview(reviews, newReview)
   let upload = await uploadToIpfs('cid.json', reviews)
-  let param = [id, hashcid, upload.data.cid]
+  let param = [id, upload.data.cid, hashcid]
   console.log("params : ", param);
   await callSmartContractFunction('binance-testnet', address, "setAllCID", param);
+  await callSmartContractFunction('binance-testnet', address, "sendRewardFromPool", [wallet, id]);
 }
 
 async function validHash(hashobject, passwd) {
@@ -285,18 +310,11 @@ async function validHash(hashobject, passwd) {
 /* ********************************************* */
 
 checkConnection();
-// checkSmartContractIsImported();
 
 connectWallet("Wallet Address");
 if (localStorage.getItem('smartContract') == undefined) {
   await importSc();
-  // await addProduct();
 }
-console.log("smart contract : ", JSON.parse(localStorage.getItem('smartContract')));
-
 
 display_all_products();
-
-const obj = {0:"Super Produit"};
-addReview(obj, "Super");
 
