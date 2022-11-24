@@ -95,8 +95,10 @@ async function display_all_products() {
   }
 
   for (let i = 0; i < nbProducts; i++) {
+    console.log("nombre de boucle : ", i);
     let res2 = await readSmartContractFunction("binance-testnet", addressOfSmartContract, "products", [i]);
     let product = res2.data.response;
+    console.log("product : ", product);
 
     document.getElementById(`item-${product[0]}`).addEventListener("click", async function(e) {
       e.preventDefault();
@@ -110,7 +112,7 @@ async function display_all_products() {
       <form>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" class="form-control" id="pwd-review" placeholder="Enter password">
+          <input class="form-control" id="pwd-review" placeholder="Enter password">
           <small class="form-text text-muted">it has been sent to you by mail.</small>
         </div>
         <div class="form-group">
@@ -118,7 +120,14 @@ async function display_all_products() {
           <textarea class="form-control" id="review" rows="3"></textarea>
         </div>
         <button id="btn-submit-review" class="btn btn-primary mb-2">Submit</button>
+        <button id="btn-get-hash" class="btn btn-primary mb-2">Get hash</button>
+        <span id="hash"></span>
       </form> `;
+
+      document.getElementById("btn-get-hash").addEventListener("click", function (e) {
+        e.preventDefault();
+        displayHash(product);
+      });
 
       document.getElementById("btn-submit-review").addEventListener("click", async function(e) {
         e.preventDefault();
@@ -128,8 +137,6 @@ async function display_all_products() {
         console.log("passWord ", pwd);
         console.log("message ", message);
 
-        console.log(product);
-
 
         // logic de hash password et compare et le reste
       });
@@ -137,7 +144,15 @@ async function display_all_products() {
   }
 }
 
+async function displayHash(product) {
+  console.log("ou : ", product[3]);
+  let hash = await addHash(product[0], product[3])
+  console.log("hach : ", hash);
 
+  let spanHash = document.getElementById("hash");
+  spanHash.innerHTML = hash ;
+  console.log("ok ?")
+}
 
 // let retourup=await uploadToIpfs('cidnew.json', obj)
 // console.log(retourup)
@@ -150,21 +165,28 @@ function addReview(obj, review)
 async function genPassAndHash() {
   var chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   var charLength = chars.length;
-  var passwd = '';
-  for ( var i = 0; i < 24; i++ ) {
+  var passwd = "";
+  let res = [];
+  for ( var i = 0; i < 24; i++ )
       passwd += chars.charAt(Math.floor(Math.random() * charLength));
-  }
+  res.push(passwd);
   const buf = await crypto.subtle.digest("SHA-256", new TextEncoder("utf-8").encode(passwd));
   let hash = Array.prototype.map.call(new Uint8Array(buf), x=>(('00'+x.toString(16)).slice(-2))).join('');
-  return [passwd, hash];
+  res.push(hash);
+  return res;
 }
 
-async function addHash(cid) {
-  let pwd = genPassAndHash();
-  let address = "0xB8c9627627a6F1F78CD2b9d172A2816529F313B8";
+async function addHash(id, cid) {
+  let pwd = await genPassAndHash();
+  // console.log("pwd sfsdffsdfsd : ", pwd);
+
+  let addressObj = localStorage.getItem('smartContract');
+  let address = JSON.parse(addressObj).smartContract.address;
+
   listpwd.push(pwd[0])
   let hashobj
-  if (cid === 0) {
+  if (cid == "") {
+    // console.log("on est la : ", cid, "       ", pwd[0]);
     hashobj = {}
   }
   else {
@@ -172,8 +194,23 @@ async function addHash(cid) {
     hashobj = Data.data.Object
   }
   addReview(hashobj, pwd[1])
-  let upload = await uploadToIpfs('hash.json', hashobj)
-  // callSmartContractFunction('binance-testnet', address, 'setHashCID', upload.data.cid)
+  let upload = await uploadToIpfs('hash.json', hashobj);
+  // console.log("a : ", upload)
+  console.log("new cid : ", upload.data.cid, typeof(upload.data.cid));
+  // console.log("id : ", parseInt(id, 10), typeof(parseInt(id, 10)));
+
+  // console.log("addre js: ", JSON.parse(address)); 
+  console.log("addre : ", address);
+
+
+  let data = [];
+  data.push(parseInt(id, 10));
+  data.push(upload.data.cid);
+
+
+  let foulamerde = await callSmartContractFunction('binance-testnet', address, "setHashCID", data);
+  console.log("foulamerde : ", foulamerde);
+  return pwd[0]
 }
 
 function deleteHash(obj)
@@ -216,7 +253,7 @@ async function uploadReview(newReview, cid)
 function validHash(hashobject, testhash) {
   let rvalue = false;
   Object.keys(hashobject).forEach(key => {
-      console.log("c'est pas lui : ", hashobject[key]);
+      // console.log("c'est pas lui : ", hashobject[key]);
       if (testhash == hashobject[key]) {
           rvalue = true;
           delete hashobject[key];
@@ -247,4 +284,4 @@ display_all_products();
 
 const obj = {0:"Super Produit"};
 addReview(obj, "Super");
-addHash(0);
+
