@@ -106,10 +106,7 @@ async function displayFormCreateToken(templates, index) {
           </button>
         </form>
       </div>
-    </div>
-    `
-
-
+    </div> `
 
   const btnCreateToken = document.getElementById("btn-create-token" + index);
   btnCreateToken.addEventListener("click", async () => {

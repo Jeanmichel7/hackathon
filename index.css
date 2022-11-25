@@ -1,8 +1,3 @@
-h2 {
-  text-align: center;
-  font-size: 1.5rem!important;
-}
-
 .input-wallet-address {
   min-width: 50vw ;
 }
@@ -19,8 +14,20 @@ h2 {
 
 .item {
   margin: 10px;
+  padding-top:15px!important;
   border: solid 1px #e0e0e0;
-  padding: 10px;
   border-radius: 5px;
+}
 
+.comment-wrapper {
+  border: solid 1px #e0e0e0;
+  padding: 10px 20px 0px 20px;
+  border-radius: 5px;
+}
+
+.form-review {
+  margin: 20px!important;
+  border: solid 1px #e0e0e0;
+  padding: 30px;
+  border-radius: 5px;
 }

@@ -21,6 +21,14 @@ export const http = axios.create({
   },
 })
 
+export const httpB = axios.create({
+  baseURL: "https://api.starton.io/v2",
+  headers: {
+    "x-api-key": 'a9Wp0e1aqMX8pmxvrNFImYwh1Pe3xU7u',
+    "Access-Control-Allow-Origin": "*"
+  }
+})
+
 export const httpA = axios.create({
   baseURL: "https://api.starton.io/v3",
   headers: {
@@ -43,7 +51,14 @@ export async function smartContractTemplate () {
 
 /* Gas */
 export async function gasOnGoerli() {
-  const response = await http.get('/gas-price/ethereum-goerli');
+  const response = await httpA.get('/gas-price/ethereum-goerli');
+  return response.data;
+}
+
+export async function gasOnBNB() {
+  const response = await httpB.get('/gas-price/binance-testnet');
+  console.log("gas : ", response.data);
+
   return response.data;
 }
 
